@@ -1,0 +1,141 @@
+extends layout
+
+block content
+  #wrapper
+    #sidenav-wrapper
+        nav.sidenav
+            ul.sidenav-list
+                li.sidenav-list-item(key="fa fa-database")
+                    a.a1(href="#d1"): i(class="fa fa-database")
+                li.sidenav-list-item(key="fa fa-user-plus")
+                    a.a2(href="#d2"): i(class="fa fa-user-plus")
+    #page-content-wrapper
+        #d1
+            p Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        #d2
+            p 22Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        #map
+        #style-menu
+            input#improved(type='radio', name='rtoggle', value='improved', checked='checked')
+            label(for='improved') App
+            input#basic(type='radio', name='rtoggle', value='basic')
+            label(for='basic') Basic
+            input#light(type='radio', name='rtoggle', value='light')
+            label(for='light') Light
+            input#dark(type='radio', name='rtoggle', value='dark')
+            label(for='dark') Dark
+            input#street(type='radio', name='rtoggle', value='street')
+            label(for='street') Street
+        script(type='text/javascript').
+            var map = new mapboxgl.Map({
+                container: 'map',
+                center: [0, 0],
+                zoom: 2.01,
+                bearing: 0,
+                pitch: 0,
+                minZoom: 2,
+                style: '/styles/improved.json'
+            });
+
+            map.addControl(new mapboxgl.NavigationControl({position: 'top-right'}));
+
+            //flyTo point testing
+            map.on('load', function () {
+                try {
+                    addSources();
+                    addLayers();
+                } catch (error) {}
+            });
+
+            map.on('style.load', function () {
+                try {
+                    addSources();
+                    addLayers();
+                    var dbVehiclesArray = !{JSON.stringify(points)};
+                    map.addSource('points', {
+                        "type": "geojson",
+                        "data": {
+                            "type": "FeatureCollection",
+                            "features": dbVehiclesArray
+                        }
+                    });
+                    map.addLayer({
+                        "id": "points",
+                        "type": "symbol",
+                        "source": "points",
+                        "layout": {
+                            "icon-image": "{icon}-15",
+                            "text-field": "{title}",
+                            "text-font": ["Open Sans Semibold"],
+                            "text-offset": [0, 0.6],
+                            "text-anchor": "top"
+                        }
+                    });
+                } catch (error) {}
+            });
+
+            map.on('click', function (e) {
+                // Use queryRenderedFeatures to get features at a click event's point
+                // Use layer option to avoid getting results from other layers
+                var features = map.queryRenderedFeatures(e.point, {layers: ['points', 'drone']});
+                // if there are features within the given radius of the click event,
+                // fly to the location of the click event
+                if (features.length) {
+                    // Get coordinates from the symbol and center the map on those coordinates
+                    map.flyTo({center: features[0].geometry.coordinates});
+
+                    //display pop up with coords
+                    var popup = new mapboxgl.Popup()
+                            .setLngLat(features[0].geometry.coordinates)
+                            .setHTML(features[0].geometry.coordinates + '<br />' + features[0].properties.description)
+                            .addTo(map);
+                }
+            });
+
+            // Use the same approach as above to indicate that the symbols are clickable
+            // by changing the cursor style to 'pointer'.
+            map.on('mousemove', function (e) {
+                var features = map.queryRenderedFeatures(e.point, {layers: ['points', 'drone']});
+                map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+            });
+
+            var layerList = document.getElementById('style-menu');
+            var inputs = layerList.getElementsByTagName('input');
+
+            function switchLayer(layer) {
+                var layerId = layer.target.id;
+                map.setStyle('/styles/' + layerId + '.json');
+            }
+
+            for (var i = 0; i < inputs.length; i++) {
+                inputs[i].onclick = switchLayer;
+            }
+
+            var pubnub = PUBNUB.init({
+                publish_key: 'pub-c-d37923ea-c902-429e-bd5b-6c7fdc3f4e21',
+                subscribe_key: 'sub-c-937d67c4-5508-11e6-bd9c-0619f8945a4f',
+                error: function (error) {
+                    console.log('Error:', error);
+                }
+            });
+
+            pubnub.subscribe({
+                channel: "my_channel",
+                presence: function (m) {
+                    console.log(m);
+                },
+                message: function (m) {
+                    movePoint(m);
+                }
+            });
+
+            $.periodic({period: 10000, decay: 1, max_period: 60000}, function () {
+                $.ajax({
+                    url: '/update',
+                    success: function (data) {
+                        movePoints(data);
+                    },
+                    complete: this.ajax_complete,
+                    dataType: 'json'
+                });
+            });
