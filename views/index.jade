@@ -31,7 +31,7 @@ block content
             var map = new mapboxgl.Map({
                 container: 'map',
                 center: [0, 0],
-                zoom: 5,
+                zoom: 2.01,
                 bearing: 0,
                 pitch: 0,
                 minZoom: 2,
@@ -130,10 +130,10 @@ block content
                 }
             });
 
-            $.periodic({period: 10000, decay: 1, max_period: 60000}, function () {
+            $.periodic({period: 10000, decay: 1, max_period: 60000}, function() {
                 $.ajax({
                     url: '/update',
-                    success: function (data) {
+                    success: function(data) {
                         movePoints(data);
                     },
                     complete: this.ajax_complete,

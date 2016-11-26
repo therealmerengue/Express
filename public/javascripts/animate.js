@@ -54,7 +54,17 @@ function movePoints(points) {
     var currentPoints = map.getSource('points')._data.features;
     var unchangedPoints = [];
     var changedPoints = [];
+    var preChangedPoints = []; //for history
     var routes = [];
+
+    if (currentPoints.length != points.length) {
+        currentPoints = currentPoints.concat(points.slice(currentPoints.length, points.length));
+        map.getSource('points').setData({
+            "type": "FeatureCollection",
+            "features": currentPoints
+        });
+    }
+
     for (var i = 0; i < points.length; i++) {
         var route = {
             "type": "FeatureCollection",
@@ -86,6 +96,7 @@ function movePoints(points) {
             route.features[0].geometry.coordinates = arc;
             routes.push(route);
             changedPoints.push(points[i]);
+            preChangedPoints.push(currentPoints[i]);
         }
     }
 
@@ -93,6 +104,21 @@ function movePoints(points) {
 
     if (changedPoints.length == 0)
         return;
+
+    $.ajax({
+        type: "POST",
+        url: "/insert",
+        dataType: "json",
+        data: {
+            vehicleData: JSON.stringify(preChangedPoints)
+        },
+        success: function (data) {
+            console.log('Success inserting data');
+        },
+        error: function () {
+            console.log('Error inserting data');
+        }
+    });
 
     (function animatePoints() {
         for (var i = 0; i < changedPoints.length; i++) {
@@ -110,6 +136,8 @@ function movePoints(points) {
         }
         counter = counter + 1;
     })(counter);
+
+
     /*var data = {
         "type": "FeatureCollection",
         "features": points
