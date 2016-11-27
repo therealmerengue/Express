@@ -1,3 +1,21 @@
+
+function makeHistoryPostRequest(preChangedPoints) {
+    $.ajax({
+        type: "POST",
+        url: "/insert",
+        dataType: "json",
+        data: {
+            vehicleData: JSON.stringify(preChangedPoints)
+        },
+        success: function (data) {
+            console.log('Success inserting data');
+        },
+        error: function () {
+            console.log('Error inserting data');
+        }
+    });
+}
+
 function movePoint(m) {
     var route = {
         "type": "FeatureCollection",
@@ -50,12 +68,21 @@ function movePoint(m) {
     })(counter);
 }
 
-function movePoints(points) {
+function movePointsAnimated(points) {
     var currentPoints = map.getSource('points')._data.features;
     var unchangedPoints = [];
     var changedPoints = [];
     var preChangedPoints = []; //for history
     var routes = [];
+
+    var sortByPlate = function(v1, v2) {
+        var plate1 = v1.properties.plate;
+        var plate2 = v2.properties.plate;
+        return plate1.localeCompare(plate2);
+    }
+
+    currentPoints.sort(sortByPlate);
+    points.sort(sortByPlate);
 
     if (currentPoints.length != points.length) {
         currentPoints = currentPoints.concat(points.slice(currentPoints.length, points.length));
@@ -105,20 +132,7 @@ function movePoints(points) {
     if (changedPoints.length == 0)
         return;
 
-    $.ajax({
-        type: "POST",
-        url: "/insert",
-        dataType: "json",
-        data: {
-            vehicleData: JSON.stringify(preChangedPoints)
-        },
-        success: function (data) {
-            console.log('Success inserting data');
-        },
-        error: function () {
-            console.log('Error inserting data');
-        }
-    });
+    makeHistoryPostRequest(preChangedPoints);
 
     (function animatePoints() {
         for (var i = 0; i < changedPoints.length; i++) {
@@ -144,4 +158,3 @@ function movePoints(points) {
     }
     map.getSource('points').setData(data);*/
 };
-

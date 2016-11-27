@@ -134,7 +134,7 @@ block content
                 $.ajax({
                     url: '/update',
                     success: function(data) {
-                        movePoints(data);
+                        movePointsAnimated(data);
                     },
                     complete: this.ajax_complete,
                     dataType: 'json'
