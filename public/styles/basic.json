@@ -15,7 +15,7 @@
   "sources": {
     "mapbox": {
       "tiles": [
-        "http://localhost:3000/planet/{z}/{x}/{y}.pbf"
+        "http://localhost:8000/planet/{z}/{x}/{y}.pbf"
       ],
       "type": "vector",
       "maxzoom": 14
@@ -23,7 +23,7 @@
     "parcels": {
       "type": "vector",
       "tiles": [
-        "http://localhost:3000/planet/{z}/{x}/{y}.pbf"
+        "http://localhost:8000/planet/{z}/{x}/{y}.pbf"
       ],
       "maxzoom": 14,
       "minzoom": 14

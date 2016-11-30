@@ -1,4 +1,3 @@
-
 function makeHistoryPostRequest(preChangedPoints) {
     $.ajax({
         type: "POST",
