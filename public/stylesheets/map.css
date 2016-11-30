@@ -4,12 +4,8 @@
     bottom: 0px;
     width: 100%;
 }
-#style-menu {
-    position: absolute;
-    background-color: rgba(255, 255, 255, .5);
-    padding: 10px;
-    font-family: 'Open Sans', sans-serif;
-    right: 0px;
-    bottom: 0px;
-    z-index: -1;
+
+input[type="radio"] {
+    margin-top: -1px;
+    vertical-align: middle;
 }
