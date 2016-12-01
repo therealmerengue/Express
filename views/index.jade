@@ -112,24 +112,6 @@ block content
                 inputs[i].onclick = switchLayer;
             }
 
-            var pubnub = PUBNUB.init({
-                publish_key: 'pub-c-d37923ea-c902-429e-bd5b-6c7fdc3f4e21',
-                subscribe_key: 'sub-c-937d67c4-5508-11e6-bd9c-0619f8945a4f',
-                error: function (error) {
-                    console.log('Error:', error);
-                }
-            });
-
-            pubnub.subscribe({
-                channel: "my_channel",
-                presence: function (m) {
-                    console.log(m);
-                },
-                message: function (m) {
-                    movePoint(m);
-                }
-            });
-
             $.periodic({period: 10000, decay: 1, max_period: 60000}, function() {
                 $.ajax({
                     url: '/update',

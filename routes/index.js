@@ -55,7 +55,7 @@ router.post('/insert', function(req, res, next) {
     //vehicleHistoryData.create(JSON.parse(req.body.vehicleData));
     //var data = new vehicleHistoryData(JSON.parse(req.body.vehicleData));
     //data.save();
-    vehicleHistoryData.collection.insertMany(JSON.parse(req.body.vehicleData), function(err,r) {
+    vehicleHistoryData.collection.insertMany(JSON.parse(req.body.vehicleData), function(err, r) {
 
     });
 

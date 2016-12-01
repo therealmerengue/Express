@@ -70,8 +70,10 @@ function movePoint(m) {
 function movePointsAnimated(points) {
     var currentPoints = map.getSource('points')._data.features;
     var unchangedPoints = [];
-    var changedPoints = [];
+    var movedPoints = [];
+    var changedNotMovedPoints = [];
     var preChangedPoints = []; //for history
+
     var routes = [];
 
     var sortByPlate = function(v1, v2) {
@@ -80,15 +82,37 @@ function movePointsAnimated(points) {
         return plate1.localeCompare(plate2);
     }
 
+    var setSourceData = function(features) {
+        map.getSource('points').setData({
+            "type": "FeatureCollection",
+            "features": features
+        });
+    }
+
     currentPoints.sort(sortByPlate);
     points.sort(sortByPlate);
 
-    if (currentPoints.length != points.length) {
+    if (currentPoints.length < points.length) {
         currentPoints = currentPoints.concat(points.slice(currentPoints.length, points.length));
-        map.getSource('points').setData({
-            "type": "FeatureCollection",
-            "features": currentPoints
-        });
+        setSourceData(currentPoints);
+    } else if (currentPoints.length > points.length) {
+        var removedPoints = [];
+
+        for (var b = 0; b < currentPoints.length; b++) {
+            if (points[b] === undefined) {
+                removedPoints.push(currentPoints[b]);
+                currentPoints.splice(b, 1);
+                b--;
+            }
+            else if (currentPoints[b].properties.plate != points[b].properties.plate) {
+                removedPoints.push(currentPoints[b]);
+                currentPoints.splice(b, 1);
+                b--;
+            }
+        }
+        setSourceData(currentPoints);
+
+        makeHistoryPostRequest(removedPoints);
     }
 
     for (var i = 0; i < points.length; i++) {
@@ -108,7 +132,18 @@ function movePointsAnimated(points) {
 
         var lineDistance = turf.lineDistance(route.features[0], 'kilometers');
         if (lineDistance == 0) {
-            unchangedPoints.push(points[i]);
+            var changed = false;
+            var props = Object.getOwnPropertyNames(points[i].properties).sort();
+            for (var a = 0; a < props.length; a++) {
+                if (points[i].properties[props[a]] != currentPoints[i].properties[props[a]]) {
+                    changedNotMovedPoints.push(points[i]);
+                    changed = true;
+                    preChangedPoints.push(currentPoints[i]);
+                    break;
+                }
+            }
+            if (!changed)
+                unchangedPoints.push(points[i]);
         }
         else {
             console.log(lineDistance);
@@ -121,28 +156,30 @@ function movePointsAnimated(points) {
 
             route.features[0].geometry.coordinates = arc;
             routes.push(route);
-            changedPoints.push(points[i]);
+            movedPoints.push(points[i]);
             preChangedPoints.push(currentPoints[i]);
         }
     }
 
     var counter = 0;
 
-    if (changedPoints.length == 0)
+    if (movedPoints.length == 0)
+    {
+        if (changedNotMovedPoints.length != 0) {
+            makeHistoryPostRequest(preChangedPoints);
+            setSourceData(changedNotMovedPoints.concat(unchangedPoints));
+        }
         return;
+    }
 
     makeHistoryPostRequest(preChangedPoints);
 
     (function animatePoints() {
-        for (var i = 0; i < changedPoints.length; i++) {
-            changedPoints[i].geometry.coordinates = routes[i].features[0].geometry.coordinates[counter];
+        for (var i = 0; i < movedPoints.length; i++) {
+            movedPoints[i].geometry.coordinates = routes[i].features[0].geometry.coordinates[counter];
         }
-        try {
-            map.getSource('points').setData({
-                "type": "FeatureCollection",
-                "features": changedPoints.concat(unchangedPoints)
-            });
-        } catch (err) {}
+
+        setSourceData(movedPoints.concat(changedNotMovedPoints.concat(unchangedPoints)));
 
         if (counter < 10) {
             requestAnimationFrame(animatePoints);
