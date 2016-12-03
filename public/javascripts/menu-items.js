@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var sideDivs = ['d1', 'd2'];
+    var sideDivs = ['d2'];
     var pageWidth = $(document).width();
     var sideNavWidth = $('.sidenav').css('width');
 
@@ -12,7 +12,6 @@ $(document).ready(function () {
     });
 
     $(".sidenav-list li a").click(function () {
-
         // Set the effect type
         var effect = 'slide';
 
@@ -26,7 +25,8 @@ $(document).ready(function () {
 
         var toggleElement = function() {
             toggledElement.toggle(effect, options, duration, function() {
-                toggledElement.css('width', '30%');
+                if (toggledElement.attr("id") != 'd1')
+                    toggledElement.css('width', '30%');
             });
         }
 
@@ -41,6 +41,21 @@ $(document).ready(function () {
             }
         }
         toggleElement();
+    });
+
+    $('.btn-primary').on('click', function () {
+        map.setStyle('/styles/' + $(this).find('input').attr('id') + '.json');
+    });
+
+    $('.vehicle').on('click', function () {
+        $.ajax({
+            url: '/info/' + $(this).html().replace(/\s/g, '%20'),
+            success: function (data) {
+                alert(JSON.stringify(data));
+            },
+            complete: this.ajax_complete,
+            dataType: 'json'
+        });
     });
 });
 

@@ -93,11 +93,17 @@ function movePointsAnimated(points) {
     points.sort(sortByPlate);
 
     if (currentPoints.length < points.length) {
-        currentPoints = currentPoints.concat(points.slice(currentPoints.length, points.length));
+        //currentPoints = currentPoints.concat(points.slice(currentPoints.length, points.length)); //BUG!
+        for (var c = 0; c < points.length; c++) {
+            if (currentPoints[c] === undefined)
+                currentPoints.splice(c, 0, points[c]);
+            else if (points[c].properties.plate != currentPoints[c].properties.plate) {
+                currentPoints.splice(c, 0, points[c]);
+            }
+        }
         setSourceData(currentPoints);
     } else if (currentPoints.length > points.length) {
         var removedPoints = [];
-
         for (var b = 0; b < currentPoints.length; b++) {
             if (points[b] === undefined) {
                 removedPoints.push(currentPoints[b]);

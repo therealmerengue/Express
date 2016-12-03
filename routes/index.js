@@ -50,6 +50,15 @@ router.get('/update', function(req, res, next) {
         });
 });
 
+router.get('/info/:plate', function(req, res, next) {
+    var plate = req.params.plate;
+    console.log(plate);
+    vehicleData.find({'properties.plate': plate}, {type:1, geometry:1, properties:1, _id:0})
+        .then(function(doc) {
+            res.send(JSON.stringify(doc));
+        });
+});
+
 router.post('/insert', function(req, res, next) {
     console.log(JSON.parse(req.body.vehicleData));
     //vehicleHistoryData.create(JSON.parse(req.body.vehicleData));

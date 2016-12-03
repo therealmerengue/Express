@@ -31,10 +31,27 @@ body, p, h1, h2, h3, h4, ul, li  {
     z-index: 1000;
     position: absolute;
     margin-left: 60px;
-    width: 30%;
     height: 100%;
 }
+
+#d1 {
+    width: 15%;
+    min-width: 220px;
+}
+
+#d2 {
+    width: 30%;
+}
+
 #d1, #d2 p {
     padding: 15px;
     font-size: 0.917em;
+}
+
+label.btn.btn-primary {
+    display: inline-block;
+}
+
+label.btn.btn-primary img {
+    margin-right: 5%;
 }

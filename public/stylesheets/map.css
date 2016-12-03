@@ -5,7 +5,24 @@
     width: 100%;
 }
 
-input[type="radio"] {
-    margin-top: -1px;
-    vertical-align: middle;
+.mapboxgl-popup-tip, .mapboxgl-popup-content {
+    visibility: hidden;
+    height: 0%;
+}
+
+.content {
+    padding: 5%;
+    opacity: 1;
+    width: 300px;
+    height: 220px;
+    overflow: inherit;
+    background: rgba(26, 26, 26, 0.85);
+    border: 5px solid #7fcff7;
+}
+
+.x {
+    float: right;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: large;
 }

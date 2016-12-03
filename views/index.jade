@@ -12,19 +12,33 @@ block content
     #page-content-wrapper
         #d1
             p Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-            #style-menu
-                input#style(type='radio', name='rtoggle', value='style', checked='checked')
-                label(for='style') App
-                input#basic(type='radio', name='rtoggle', value='basic')
-                label(for='basic') Basic
-                input#light(type='radio', name='rtoggle', value='light')
-                label(for='light') Light
-                input#dark(type='radio', name='rtoggle', value='dark')
-                label(for='dark') Dark
-                input#street(type='radio', name='rtoggle', value='street')
-                label(for='street') Street
+            .btn-group-vertical(data-toggle='buttons')
+                label.btn.btn-primary.active
+                    img(src="images/App.png")
+                    input#style(type='radio', name='options', autocomplete='off', checked='')
+                    |  App
+                label.btn.btn-primary
+                    img(src="images/Basic.png")
+                    input#basic(type='radio', name='options', autocomplete='off')
+                    |  Basic
+                label.btn.btn-primary
+                    img(src="images/Light.png")
+                    input#light(type='radio', name='options', autocomplete='off')
+                    |  Light
+                label.btn.btn-primary
+                    img(src="images/Dark.png")
+                    input#dark(type='radio', name='options', autocomplete='off')
+                    |  Dark
+                label.btn.btn-primary
+                    img(src="images/Street.png")
+                    input#street(type='radio', name='options', autocomplete='off')
+                    |  Street
         #d2
-            p 22Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+            button#refresh(type="button" class="btn btn-primary") Refresh
+            .ui-content(role='main')
+                ul.list-group
+                    for point in points
+                        a.list-group-item.vehicle(href='#')= point.properties.plate
         #map
 
         script(type='text/javascript').
@@ -40,30 +54,24 @@ block content
 
             map.addControl(new mapboxgl.NavigationControl({position: 'top-right'}));
 
-            //flyTo point testing
-            map.on('load', function () {
-                try {
-                    addSources();
-                    addLayers();
-                } catch (error) {}
-            });
-
             map.on('style.load', function () {
                 try {
-                    addSources();
-                    addLayers();
                     var dbVehiclesArray = !{JSON.stringify(points)};
                     map.addSource('points', {
                         "type": "geojson",
                         "data": {
                             "type": "FeatureCollection",
                             "features": dbVehiclesArray
-                        }
+                        },
+                        cluster: true,
+                        clusterMaxZoom: 14, // Max zoom to cluster points on
+                        clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
                     });
                     map.addLayer({
                         "id": "points",
                         "type": "symbol",
                         "source": "points",
+                        "filter": ["!has", "point_count"],
                         "layout": {
                             "icon-image": "{icon}-15",
                             "text-field": "{title}",
@@ -72,45 +80,93 @@ block content
                             "text-anchor": "top"
                         }
                     });
+
+                    //cluster layers - colors depending on count
+                    var layers = [
+                        [150, '#f28cb1'],
+                        [20, '#f1f075'],
+                        [0, '#51bbd6']
+                    ];
+
+                    //adding clusters
+                    layers.forEach(function(layer, i) {
+                        map.addLayer({
+                            "id": "cluster-" + i,
+                            "type": "circle",
+                            "source": "points",
+                            "paint": {
+                                "circle-color": layer[1],
+                                "circle-radius": 18
+                            },
+                            "filter": i === 0 ?
+                                    [">=", "point_count", layer[0]] :
+                                    ["all",
+                                        [">=", "point_count", layer[0]],
+                                        ["<", "point_count", layers[i - 1][0]]]
+                        });
+                    });
+                    //cluster labels
+                    map.addLayer({
+                        "id": "cluster-count",
+                        "type": "symbol",
+                        "source": "points",
+                        "layout": {
+                            "text-field": "{point_count}",
+                            "text-font": [
+                                "Open Sans Semibold"
+                            ],
+                            "text-size": 12
+                        }
+                    });
                 } catch (error) {}
             });
 
             map.on('click', function (e) {
                 // Use queryRenderedFeatures to get features at a click event's point
                 // Use layer option to avoid getting results from other layers
-                var features = map.queryRenderedFeatures(e.point, {layers: ['points', 'drone']});
+                var features = map.queryRenderedFeatures(e.point, {layers: ['points']});
                 // if there are features within the given radius of the click event,
                 // fly to the location of the click event
                 if (features.length) {
                     // Get coordinates from the symbol and center the map on those coordinates
                     map.flyTo({center: features[0].geometry.coordinates});
 
+                    var popupDiv = window.document.createElement('div');
+
+                    var content = window.document.createElement('div');
+                    content.setAttribute('class', 'content');
+                    var span = document.createElement('span');
+                    span.setAttribute('class', 'x');
+                    span.setAttribute('onclick', 'parentNode.remove()');
+                    span.innerHTML = '&times;';
+                    content.appendChild(span);
+                    var header = document.createElement('h2');
+                    header.innerHTML = features[0].properties.plate;
+                    header.style.color = 'white';
+                    var par = document.createElement('p');
+                    par.innerHTML = 'Nice meme.';
+                    par.style.color = 'white';
+                    content.appendChild(header);
+                    content.appendChild(par);
+                    popupDiv.appendChild(content);
+
+                    //popupDiv.innerHTML = '<div class="content"> <span class="x" onclick="parentNode.remove()">&times;</span><h2>features[0].geometry.coordinates</h2> <p>You can put plenty of details in here. In the original, I listed contact information and linked phone numbers and email addresses.</p> </div>';
+                    popupDiv.style.visibility = 'visible';
                     //display pop up with coords
                     var popup = new mapboxgl.Popup()
                             .setLngLat(features[0].geometry.coordinates)
-                            .setHTML(features[0].geometry.coordinates + '<br />' + features[0].properties.description)
+                            .setDOMContent(popupDiv)
                             .addTo(map);
                 }
             });
 
+
             // Use the same approach as above to indicate that the symbols are clickable
             // by changing the cursor style to 'pointer'.
             map.on('mousemove', function (e) {
-                var features = map.queryRenderedFeatures(e.point, {layers: ['points', 'drone']});
+                var features = map.queryRenderedFeatures(e.point, {layers: ['points']});
                 map.getCanvas().style.cursor = features.length ? 'pointer' : '';
             });
-
-            var layerList = document.getElementById('style-menu');
-            var inputs = layerList.getElementsByTagName('input');
-
-            function switchLayer(layer) {
-                var layerId = layer.target.id;
-                map.setStyle('/styles/' + layerId + '.json');
-            }
-
-            for (var i = 0; i < inputs.length; i++) {
-                inputs[i].onclick = switchLayer;
-            }
 
             $.periodic({period: 10000, decay: 1, max_period: 60000}, function() {
                 $.ajax({
@@ -122,3 +178,8 @@ block content
                     dataType: 'json'
                 });
             });
+
+            var refreshButton = document.getElementById('refresh');
+            refreshButton.onclick = function() {
+            };
+
