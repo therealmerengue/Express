@@ -5,14 +5,18 @@ block content
     #sidenav-wrapper
         nav.sidenav
             ul.sidenav-list
-                li.sidenav-list-item(key="fa fa-database")
-                    a.a1(href="#d1"): i(class="fa fa-database")
-                li.sidenav-list-item(key="fa fa-user-plus")
-                    a.a2(href="#d2"): i(class="fa fa-user-plus")
+                li.sidenav-list-item
+                    a(href="#d1"): i(class="fa fa-database")
+                li.sidenav-list-item
+                    a(href="#d2"): i(class="fa fa-user-plus")
+                li.sidenav-list-item
+                    a(href="#d3"): i(class="fa fa-user-plus")
     #page-content-wrapper
         #d1
-            p Lorem Ipsum is simply dummy text of the printing and typesetting industry.
             .btn-group-vertical(data-toggle='buttons')
+                label.btn.btn-default.disabled
+                    input(type='radio', name='options', autocomplete='off', disabled='true')
+                    |  Style:
                 label.btn.btn-primary.active
                     img(src="images/App.png")
                     input#style(type='radio', name='options', autocomplete='off', checked='')
@@ -34,11 +38,16 @@ block content
                     input#street(type='radio', name='options', autocomplete='off')
                     |  Street
         #d2
-            button#refresh(type="button" class="btn btn-primary") Refresh
-            .ui-content(role='main')
-                ul.list-group
+            form(role='form')
+                .form-group
+                    input#searchinput.form-control(type='search', placeholder='Search...')
+                #searchlist.list-group
                     for point in points
-                        a.list-group-item.vehicle(href='#')= point.properties.plate
+                        a.list-group-item.vehicle(href='#')
+                            span= point.properties.plate
+            script.
+                $('#searchlist').btsListFilter('#searchinput', {itemChild: 'span'});
+        #d3
         #map
 
         script(type='text/javascript').
@@ -54,7 +63,7 @@ block content
 
             map.addControl(new mapboxgl.NavigationControl({position: 'top-right'}));
 
-            map.on('style.load', function () {
+            map.on('style.load', function() {
                 try {
                     var dbVehiclesArray = !{JSON.stringify(points)};
                     map.addSource('points', {
@@ -124,12 +133,12 @@ block content
             map.on('click', function (e) {
                 // Use queryRenderedFeatures to get features at a click event's point
                 // Use layer option to avoid getting results from other layers
-                var features = map.queryRenderedFeatures(e.point, {layers: ['points']});
+                var pointFeatures = map.queryRenderedFeatures(e.point, {layers: ['points']});
                 // if there are features within the given radius of the click event,
                 // fly to the location of the click event
-                if (features.length) {
+                if (pointFeatures.length) {
                     // Get coordinates from the symbol and center the map on those coordinates
-                    map.flyTo({center: features[0].geometry.coordinates});
+                    map.flyTo({center: pointFeatures[0].geometry.coordinates, zoom: 10});
 
                     var popupDiv = window.document.createElement('div');
 
@@ -137,26 +146,37 @@ block content
                     content.setAttribute('class', 'content');
                     var span = document.createElement('span');
                     span.setAttribute('class', 'x');
-                    span.setAttribute('onclick', 'parentNode.remove()');
+                    span.onclick = function() {
+                        span.parentElement.remove();
+                        map.flyTo({zoom: map.getZoom() - 3});
+                    };
                     span.innerHTML = '&times;';
                     content.appendChild(span);
-                    var header = document.createElement('h2');
-                    header.innerHTML = features[0].properties.plate;
-                    header.style.color = 'white';
-                    var par = document.createElement('p');
-                    par.innerHTML = 'Nice meme.';
-                    par.style.color = 'white';
-                    content.appendChild(header);
-                    content.appendChild(par);
+                    var plateHeader = document.createElement('h2');
+                    plateHeader.innerHTML = pointFeatures[0].properties.plate;
+                    var speed = document.createElement('h5');
+                    speed.innerHTML = 'Speed: ' + pointFeatures[0].properties.speed;
+                    var distance = document.createElement('h5');
+                    distance.innerHTML = 'Distance: ' + pointFeatures[0].properties.distance;
+                    content.appendChild(plateHeader);
+                    content.appendChild(speed);
+                    content.appendChild(distance);
                     popupDiv.appendChild(content);
 
-                    //popupDiv.innerHTML = '<div class="content"> <span class="x" onclick="parentNode.remove()">&times;</span><h2>features[0].geometry.coordinates</h2> <p>You can put plenty of details in here. In the original, I listed contact information and linked phone numbers and email addresses.</p> </div>';
                     popupDiv.style.visibility = 'visible';
                     //display pop up with coords
                     var popup = new mapboxgl.Popup()
-                            .setLngLat(features[0].geometry.coordinates)
+                            .setLngLat(pointFeatures[0].geometry.coordinates)
                             .setDOMContent(popupDiv)
                             .addTo(map);
+                }
+
+                var clusterFeatures = map.queryRenderedFeatures(e.point, {layers: ['cluster-0', 'cluster-1', 'cluster-2']});
+                if (clusterFeatures.length) {
+                    map.flyTo({
+                        center: e.lngLat,
+                        zoom: map.getZoom() + 2
+                    });
                 }
             });
 
@@ -164,7 +184,7 @@ block content
             // Use the same approach as above to indicate that the symbols are clickable
             // by changing the cursor style to 'pointer'.
             map.on('mousemove', function (e) {
-                var features = map.queryRenderedFeatures(e.point, {layers: ['points']});
+                var features = map.queryRenderedFeatures(e.point, {layers: ['points', 'cluster-0', 'cluster-1', 'cluster-2']});
                 map.getCanvas().style.cursor = features.length ? 'pointer' : '';
             });
 
@@ -178,8 +198,3 @@ block content
                     dataType: 'json'
                 });
             });
-
-            var refreshButton = document.getElementById('refresh');
-            refreshButton.onclick = function() {
-            };
-
