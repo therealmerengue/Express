@@ -117,3 +117,4 @@ function getMap(options, pointData) {
 
     return map;
 }
+

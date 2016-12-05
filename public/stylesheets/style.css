@@ -65,6 +65,14 @@ label.btn.btn-primary img {
 }
 
 li.sidenav-list-item > a.active {
-    color: blue;
+    color: red;
     outline: 0;
+}
+
+.modal-body.material-modal__body {
+    padding: 0px;
+}
+
+.sidenav-list-item a {
+    color: #337ab7;
 }

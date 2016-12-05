@@ -11,22 +11,30 @@
 }
 
 .content {
-    padding: 5%;
+    padding: 0px;
     opacity: 1;
     width: 300px;
     height: 220px;
     overflow: inherit;
     background: rgba(255, 255, 255, 0.85);
-    border: 3px solid #7fcff7;
+    border: 3px solid #4092d9;
 }
 
 .x {
     float: right;
-    color: red;
+    color: white;
     cursor: pointer;
     font-size: large;
 }
 
 .in {
     background: rgba(0, 0, 0, 0.8);
+}
+
+.material-panel__body {
+    padding: 2%;
+}
+
+.popup-footer {
+    padding: 5%;
 }

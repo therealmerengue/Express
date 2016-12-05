@@ -6,11 +6,11 @@ block content
         nav.sidenav
             ul.sidenav-list
                 li.sidenav-list-item
-                    a(href="#d1", data-toggle="tooltip", title="Change style", data-placement="right"): i(class="fa fa-database")
+                    a(href="#d1", data-toggle="tooltip", title="Change style", data-placement="right"): i(class="fa fa-paint-brush")
                 li.sidenav-list-item
-                    a(href="#d2", data-toggle="tooltip", title="Vehicle list", data-placement="right"): i(class="fa fa-user-plus")
+                    a(href="#d2", data-toggle="tooltip", title="Vehicle list", data-placement="right"): i(class="fa fa-list")
                 li.sidenav-list-item
-                    a(href="#d3"): i(class="fa fa-user-plus")
+                    a(href="#d3"): i(class="fa fa-table")
 
     #page-content-wrapper
         #d1
@@ -74,18 +74,29 @@ block content
 
         #map
 
-        #historyModal.modal(data-easein='fadeIn', tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='false')
+        #historyModal.modal.material-modal.material-modal_primary.fade
             .modal-dialog
-                .modal-content
-                    .modal-header
-                        button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
-                        h4#myModalLabel.modal-title Speed changes
-                    .modal-body
-                        canvas#speedChart(width='200', height='200')
-                        canvas#distanceChart(width='200', height='200')
-                    .modal-footer
-                        button.btn.btn-default(data-dismiss='modal', aria-hidden='true') Close
-                        button.btn.btn-primary Save changes
+                .modal-content.material-modal__content
+                    .modal-header.material-modal__header
+                        button.close.material-modal__close(data-dismiss='modal') ×
+                        h4.modal-title.material-modal__title Modal title
+                    .modal-body.material-modal__body
+                        .panel-group.material-tabs-group
+                            ul.nav.nav-tabs.material-tabs.material-tabs_primary
+                                li.active
+                                    a.material-tabs__tab-link(href='#speedChartTab', data-toggle='tab') Speed
+                                li
+                                    a.material-tabs__tab-link(href='#distanceChartTab', data-toggle='tab') Distance
+                                li
+                                    a.material-tabs__tab-link.material-tabs__tab-link_disabled(href='javascript:void(0)') disabled
+                            .tab-content.materail-tabs-content
+                                #speedChartTab.tab-pane.fade.active.in
+                                    canvas#speedChart(width='200', height='200')
+                                #distanceChartTab.tab-pane.fade
+                                    canvas#distanceChart(width='200', height='200')
+                    .modal-footer.material-modal__footer
+                        button.btn.material-btn.material-btn(data-dismiss='modal') Close
+                        button.btn.btn-primary.material-btn.material-btn_primary Save changes
 
         script(type='text/javascript').
             var bounds = [
@@ -95,10 +106,10 @@ block content
             var map = getMap({
                 container: 'map',
                 center: [0, 0],
-                zoom: 2.01,
+                zoom: 1.01,
                 bearing: 0,
                 pitch: 0,
-                minZoom: 2,
+                minZoom: 1,
                 style: '/styles/style.json',
                 maxBounds: bounds
             }, !{JSON.stringify(points)});
