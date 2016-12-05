@@ -6,11 +6,12 @@ block content
         nav.sidenav
             ul.sidenav-list
                 li.sidenav-list-item
-                    a(href="#d1"): i(class="fa fa-database")
+                    a(href="#d1", data-toggle="tooltip", title="Change style", data-placement="right"): i(class="fa fa-database")
                 li.sidenav-list-item
-                    a(href="#d2"): i(class="fa fa-user-plus")
+                    a(href="#d2", data-toggle="tooltip", title="Vehicle list", data-placement="right"): i(class="fa fa-user-plus")
                 li.sidenav-list-item
                     a(href="#d3"): i(class="fa fa-user-plus")
+
     #page-content-wrapper
         #d1
             .btn-group-vertical(data-toggle='buttons')
@@ -37,6 +38,7 @@ block content
                     img(src="images/Street.png")
                     input#street(type='radio', name='options', autocomplete='off')
                     |  Street
+
         #d2
             form(role='form')
                 .form-group
@@ -47,152 +49,65 @@ block content
                             span= point.properties.plate
             script.
                 $('#searchlist').btsListFilter('#searchinput', {itemChild: 'span'});
+
         #d3
+            .table-responsive-vertical.shadow-z-1
+                // Table starts here
+                table#table.table.table-hover.table-mc-light-blue
+                    thead
+                        tr
+                            th Plate
+                            th Name
+                            th Coords
+                            th Speed
+                            th Distance
+                            th Last update
+                    tbody
+                        for point in points
+                            tr
+                                td(data-title='Plate')= point.properties.plate
+                                td(data-title='Name')= point.properties.title
+                                td(data-title='Coords')= point.geometry.coordinates
+                                td(data-title='Speed')= point.properties.speed
+                                td(data-title='Distance')= point.properties.distance
+                                td(data-title='Last update')= point.properties.date
+
         #map
 
+        #historyModal.modal(data-easein='fadeIn', tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='false')
+            .modal-dialog
+                .modal-content
+                    .modal-header
+                        button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+                        h4#myModalLabel.modal-title Speed changes
+                    .modal-body
+                        canvas#speedChart(width='200', height='200')
+                        canvas#distanceChart(width='200', height='200')
+                    .modal-footer
+                        button.btn.btn-default(data-dismiss='modal', aria-hidden='true') Close
+                        button.btn.btn-primary Save changes
+
         script(type='text/javascript').
-            var map = new mapboxgl.Map({
+            var bounds = [
+                [-185.0, -85.0], // Southwest coordinates
+                [185.0, 85.0]  // Northeast coordinates
+            ];
+            var map = getMap({
                 container: 'map',
                 center: [0, 0],
                 zoom: 2.01,
                 bearing: 0,
                 pitch: 0,
                 minZoom: 2,
-                style: '/styles/style.json'
-            });
-
-            map.addControl(new mapboxgl.NavigationControl({position: 'top-right'}));
-
-            map.on('style.load', function() {
-                try {
-                    var dbVehiclesArray = !{JSON.stringify(points)};
-                    map.addSource('points', {
-                        "type": "geojson",
-                        "data": {
-                            "type": "FeatureCollection",
-                            "features": dbVehiclesArray
-                        },
-                        cluster: true,
-                        clusterMaxZoom: 14, // Max zoom to cluster points on
-                        clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
-                    });
-                    map.addLayer({
-                        "id": "points",
-                        "type": "symbol",
-                        "source": "points",
-                        "filter": ["!has", "point_count"],
-                        "layout": {
-                            "icon-image": "{icon}-15",
-                            "text-field": "{title}",
-                            "text-font": ["Open Sans Semibold"],
-                            "text-offset": [0, 0.6],
-                            "text-anchor": "top"
-                        }
-                    });
-
-                    //cluster layers - colors depending on count
-                    var layers = [
-                        [150, '#f28cb1'],
-                        [20, '#f1f075'],
-                        [0, '#51bbd6']
-                    ];
-
-                    //adding clusters
-                    layers.forEach(function(layer, i) {
-                        map.addLayer({
-                            "id": "cluster-" + i,
-                            "type": "circle",
-                            "source": "points",
-                            "paint": {
-                                "circle-color": layer[1],
-                                "circle-radius": 18
-                            },
-                            "filter": i === 0 ?
-                                    [">=", "point_count", layer[0]] :
-                                    ["all",
-                                        [">=", "point_count", layer[0]],
-                                        ["<", "point_count", layers[i - 1][0]]]
-                        });
-                    });
-                    //cluster labels
-                    map.addLayer({
-                        "id": "cluster-count",
-                        "type": "symbol",
-                        "source": "points",
-                        "layout": {
-                            "text-field": "{point_count}",
-                            "text-font": [
-                                "Open Sans Semibold"
-                            ],
-                            "text-size": 12
-                        }
-                    });
-                } catch (error) {}
-            });
-
-            map.on('click', function (e) {
-                // Use queryRenderedFeatures to get features at a click event's point
-                // Use layer option to avoid getting results from other layers
-                var pointFeatures = map.queryRenderedFeatures(e.point, {layers: ['points']});
-                // if there are features within the given radius of the click event,
-                // fly to the location of the click event
-                if (pointFeatures.length) {
-                    // Get coordinates from the symbol and center the map on those coordinates
-                    map.flyTo({center: pointFeatures[0].geometry.coordinates, zoom: 10});
-
-                    var popupDiv = window.document.createElement('div');
-
-                    var content = window.document.createElement('div');
-                    content.setAttribute('class', 'content');
-                    var span = document.createElement('span');
-                    span.setAttribute('class', 'x');
-                    span.onclick = function() {
-                        span.parentElement.remove();
-                        map.flyTo({zoom: map.getZoom() - 3});
-                    };
-                    span.innerHTML = '&times;';
-                    content.appendChild(span);
-                    var plateHeader = document.createElement('h2');
-                    plateHeader.innerHTML = pointFeatures[0].properties.plate;
-                    var speed = document.createElement('h5');
-                    speed.innerHTML = 'Speed: ' + pointFeatures[0].properties.speed;
-                    var distance = document.createElement('h5');
-                    distance.innerHTML = 'Distance: ' + pointFeatures[0].properties.distance;
-                    content.appendChild(plateHeader);
-                    content.appendChild(speed);
-                    content.appendChild(distance);
-                    popupDiv.appendChild(content);
-
-                    popupDiv.style.visibility = 'visible';
-                    //display pop up with coords
-                    var popup = new mapboxgl.Popup()
-                            .setLngLat(pointFeatures[0].geometry.coordinates)
-                            .setDOMContent(popupDiv)
-                            .addTo(map);
-                }
-
-                var clusterFeatures = map.queryRenderedFeatures(e.point, {layers: ['cluster-0', 'cluster-1', 'cluster-2']});
-                if (clusterFeatures.length) {
-                    map.flyTo({
-                        center: e.lngLat,
-                        zoom: map.getZoom() + 2
-                    });
-                }
-            });
-
-
-            // Use the same approach as above to indicate that the symbols are clickable
-            // by changing the cursor style to 'pointer'.
-            map.on('mousemove', function (e) {
-                var features = map.queryRenderedFeatures(e.point, {layers: ['points', 'cluster-0', 'cluster-1', 'cluster-2']});
-                map.getCanvas().style.cursor = features.length ? 'pointer' : '';
-            });
+                style: '/styles/style.json',
+                maxBounds: bounds
+            }, !{JSON.stringify(points)});
 
             $.periodic({period: 10000, decay: 1, max_period: 60000}, function() {
                 $.ajax({
                     url: '/update',
                     success: function(data) {
-                        movePointsAnimated(data);
+                        movePointsAnimated(data, map);
                     },
                     complete: this.ajax_complete,
                     dataType: 'json'

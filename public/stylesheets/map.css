@@ -26,3 +26,7 @@
     cursor: pointer;
     font-size: large;
 }
+
+.in {
+    background: rgba(0, 0, 0, 0.8);
+}

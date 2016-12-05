@@ -4,10 +4,11 @@ html
     title= title
     link(rel='stylesheet', href='/stylesheets/map.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/table.css')
     link(rel='stylesheet', href='/stylesheets/font-awesome.min.css')
     link(rel='stylesheet', href='/stylesheets/mapbox-gl-26.css')
     link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css')
-    link(rel='stylesheet', href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/bootstrap-min.css')
     link(rel='stylesheet', href='https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css')
     link(rel='stylesheet', href='http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css')
 
@@ -22,5 +23,10 @@ html
     script(src='https://cdn.pubnub.com/pubnub-3.16.4.js')
     script(src='//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js')
     script(src='/javascripts/bootstrap-list-filter.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.js')
+    script(src='/javascripts/map.js')
+    script(src='/javascripts/data.js')
+    script(src='/javascripts/jlinq.js')
+    script(src='http://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js')
   body
     block content

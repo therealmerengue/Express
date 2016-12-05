@@ -3,6 +3,10 @@ $(document).ready(function() {
     var pageWidth = $(document).width();
     var sideNavWidth = $('.sidenav').css('width');
 
+    $("[data-toggle=tooltip]").tooltip({
+        container: 'body'
+    });
+
     jQuery.each(sideDivs, function(i, val) {
         $("#" + val).resizable({
             handles: 'e, w',
@@ -42,16 +46,25 @@ $(document).ready(function() {
         toggleElement();
     });
 
-    $('.btn-primary').on('click', function() {
+    $('label.btn-primary').on('click', function() {
         map.setStyle('/styles/' + $(this).find('input').attr('id') + '.json');
     });
 
     $('.vehicle').on('click', function() {
         $.ajax({
             url: '/info/' + $(this).find('span').html().replace(/\s/g, '%20'),
-            success: function (data) {
-                alert(JSON.stringify(data));
+            success: function(data) {
+                presentData(data);
                 map.flyTo({center: data.current[0].geometry.coordinates, zoom: 11});
+                var popupDiv = getPopup({
+                    plate: data.current[0].properties.plate,
+                    speed: data.current[0].properties.speed,
+                    distance: data.current[0].properties.distance
+                });
+                new mapboxgl.Popup()
+                    .setLngLat(data.current[0].geometry.coordinates)
+                    .setDOMContent(popupDiv)
+                    .addTo(map);
             },
             complete: this.ajax_complete,
             dataType: 'json'

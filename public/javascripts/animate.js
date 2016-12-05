@@ -67,7 +67,52 @@ function movePoint(m) {
     })(counter);
 }
 
-function movePointsAnimated(points) {
+function getPopup(data) {
+    var popupDiv = window.document.createElement('div');
+
+    var content = window.document.createElement('div');
+    content.setAttribute('class', 'content');
+
+    var span = document.createElement('span');
+    span.setAttribute('class', 'x');
+    span.onclick = function() {
+        span.parentElement.remove();
+        if (map.getZoom() > 8)
+            map.flyTo({zoom: map.getZoom() - 3});
+    };
+    span.innerHTML = '&times;';
+    content.appendChild(span);
+
+    var plateHeader = document.createElement('h2');
+    plateHeader.innerHTML = data.plate;
+    var speed = document.createElement('h5');
+    speed.innerHTML = 'Speed: ' + data.speed;
+    var distance = document.createElement('h5');
+    distance.innerHTML = 'Distance: ' + data.distance;
+
+    var historyButton = document.createElement('a');
+    historyButton.setAttribute('class', 'btn btn-primary');
+    historyButton.setAttribute('data-toggle', 'modal');
+    historyButton.setAttribute('data-target', '#historyModal');
+    historyButton.setAttribute('href', '#historyModal');
+    historyButton.setAttribute('role', 'button');
+    historyButton.innerHTML = 'Show history';
+    historyButton.onclick = function() {
+        //span.parentElement.remove();
+    };
+
+    content.appendChild(plateHeader);
+    content.appendChild(speed);
+    content.appendChild(distance);
+    content.appendChild(historyButton);
+    popupDiv.appendChild(content);
+
+    popupDiv.style.visibility = 'visible';
+
+    return popupDiv;
+}
+
+function movePointsAnimated(points, map) {
     var currentPoints = map.getSource('points')._data.features;
     var unchangedPoints = [];
     var movedPoints = [];
@@ -93,7 +138,6 @@ function movePointsAnimated(points) {
     points.sort(sortByPlate);
 
     if (currentPoints.length < points.length) {
-        //currentPoints = currentPoints.concat(points.slice(currentPoints.length, points.length)); //BUG!
         for (var c = 0; c < points.length; c++) {
             if (currentPoints[c] === undefined)
                 currentPoints.splice(c, 0, points[c]);
