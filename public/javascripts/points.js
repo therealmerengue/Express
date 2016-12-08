@@ -15,58 +15,6 @@ function makeHistoryPostRequest(preChangedPoints) {
     });
 }
 
-function movePoint(m) {
-    var route = {
-        "type": "FeatureCollection",
-        "features": [{
-            "type": "Feature",
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    map.getSource('point')._data.features[0].geometry.coordinates,
-                    m.geometry.coordinates
-                ]
-            }
-        }]
-    };
-    // Calculate the distance in kilometers between route start/end point.
-    var lineDistance = turf.lineDistance(route.features[0], 'kilometers');
-
-    var arc = [];
-
-    // Draw an arc between the `origin` & `destination` of the two points
-    for (var i = 0; i < lineDistance; i++) {
-        var segment = turf.along(route.features[0], i / 10 * lineDistance, 'kilometers');
-        arc.push(segment.geometry.coordinates);
-    }
-
-    // Update the route with calculated arc coordinates
-    route.features[0].geometry.coordinates = arc;
-
-    // Used to increment the value of the point measurement against the route.
-    var counter = 0;
-
-    (function animate() {
-        // Update point geometry to a new position based on counter denoting
-        // the index to access the arc.
-        point.features[0].geometry.coordinates = route.features[0].geometry.coordinates[counter];
-
-        // Update the source with this new data.
-        try {
-            map.getSource('point').setData(point);
-        } catch(err) {}
-
-        // Request the next frame of animation so long as destination has not
-        // been reached.
-
-        if (counter < 10) {
-            requestAnimationFrame(animate);
-        }
-
-        counter = counter + 1;
-    })(counter);
-}
-
 function getPopup(data) {
     var popupDiv = window.document.createElement('div');
 
@@ -123,14 +71,12 @@ function getPopup(data) {
     return popupDiv;
 }
 
-function movePointsAnimated(points, map) {
+function movePoints(points, map) {
     var currentPoints = map.getSource('points')._data.features;
     var unchangedPoints = [];
     var movedPoints = [];
     var changedNotMovedPoints = [];
     var preChangedPoints = []; //for history
-
-    var routes = [];
 
     var sortByPlate = function(v1, v2) {
         var plate1 = v1.properties.plate;
@@ -208,21 +154,10 @@ function movePointsAnimated(points, map) {
         }
         else {
             console.log(lineDistance);
-            var arc = [];
-
-            for (var j = 0; j < lineDistance; j++) {
-                var segment = turf.along(route.features[0], j / 10 * lineDistance, 'kilometers');
-                arc.push(segment.geometry.coordinates);
-            }
-
-            route.features[0].geometry.coordinates = arc;
-            routes.push(route);
             movedPoints.push(points[i]);
             preChangedPoints.push(currentPoints[i]);
         }
     }
-
-    var counter = 0;
 
     if (movedPoints.length == 0)
     {
@@ -235,23 +170,5 @@ function movePointsAnimated(points, map) {
 
     makeHistoryPostRequest(preChangedPoints);
 
-    (function animatePoints() {
-        for (var i = 0; i < movedPoints.length; i++) {
-            movedPoints[i].geometry.coordinates = routes[i].features[0].geometry.coordinates[counter];
-        }
-
-        setSourceData(movedPoints.concat(changedNotMovedPoints.concat(unchangedPoints)));
-
-        if (counter < 10) {
-            requestAnimationFrame(animatePoints);
-        }
-        counter = counter + 1;
-    })(counter);
-
-
-    /*var data = {
-        "type": "FeatureCollection",
-        "features": points
-    }
-    map.getSource('points').setData(data);*/
+    setSourceData(movedPoints.concat(changedNotMovedPoints.concat(unchangedPoints)));
 };

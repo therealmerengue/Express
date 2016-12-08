@@ -118,7 +118,7 @@ block content
                 $.ajax({
                     url: '/update',
                     success: function(data) {
-                        movePointsAnimated(data, map);
+                        movePoints(data, map);
                     },
                     complete: this.ajax_complete,
                     dataType: 'json'

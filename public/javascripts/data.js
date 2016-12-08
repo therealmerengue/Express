@@ -6,22 +6,12 @@ function createChart(context, labels, data, legendLabel) {
             datasets: [{
                 label: legendLabel,
                 data: data,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
+                backgroundColor: "rgba(159,204,0,0.2)",
+                borderColor: "rgba(159,204,0,1)",
+                pointBackgroundColor: "rgba(159,204,0,1)",
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "rgba(159,204,0,0.8)",
+                pointHoverBorderColor: "rgba(159,204,0,1)",
                 borderWidth: 1
             }]
         },
@@ -38,13 +28,20 @@ function createChart(context, labels, data, legendLabel) {
 }
 
 function presentData(data) {
-    var labels = jlinq.from(data.history).select(function(rec) {
+    if (data.history.length > 50) {
+        var dataHistory = data.history.slice(-50);
+    }
+    else {
+        dataHistory = data.history;
+    }
+
+    var labels = jlinq.from(dataHistory).select(function(rec) {
         return rec.properties.date;
     });
-    var speedValues = jlinq.from(data.history).select(function(rec) {
+    var speedValues = jlinq.from(dataHistory).select(function(rec) {
         return rec.properties.speed;
     });
-    var distanceValues = jlinq.from(data.history).select(function(rec) {
+    var distanceValues = jlinq.from(dataHistory).select(function(rec) {
         return rec.properties.distance;
     });
     labels.push(data.current[0].properties.date);
