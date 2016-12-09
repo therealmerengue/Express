@@ -1,126 +1,131 @@
 extends layout
 
 block content
-  #wrapper
-    #sidenav-wrapper
-        nav.sidenav
-            ul.sidenav-list
-                li.sidenav-list-item
-                    a(href="#d1", data-toggle="tooltip", title="Change style", data-placement="right"): i(class="fa fa-paint-brush")
-                li.sidenav-list-item
-                    a(href="#d2", data-toggle="tooltip", title="Vehicle list", data-placement="right"): i(class="fa fa-list")
-                li.sidenav-list-item
-                    a(href="#d3"): i(class="fa fa-table")
+    #wrapper
+        #sidenav-wrapper
+            nav.sidenav
+                ul.sidenav-list
+                    li.sidenav-list-item
+                        a(href="#d1", data-toggle="tooltip", title="Change style", data-placement="right"): i(class="fa fa-paint-brush")
+                    li.sidenav-list-item
+                        a(href="#d2", data-toggle="tooltip", title="Vehicle list", data-placement="right"): i(class="fa fa-list")
+                    li.sidenav-list-item
+                        a(href="#d3"): i(class="fa fa-table")
 
-    #page-content-wrapper
-        #d1
-            .btn-group-vertical(data-toggle='buttons')
-                label.btn.btn-default.disabled
-                    input(type='radio', name='options', autocomplete='off', disabled='true')
-                    |  Style:
-                label.btn.btn-primary.active
-                    img(src="images/App.png")
-                    input#style(type='radio', name='options', autocomplete='off', checked='')
-                    |  App
-                label.btn.btn-primary
-                    img(src="images/Basic.png")
-                    input#basic(type='radio', name='options', autocomplete='off')
-                    |  Basic
-                label.btn.btn-primary
-                    img(src="images/Light.png")
-                    input#light(type='radio', name='options', autocomplete='off')
-                    |  Light
-                label.btn.btn-primary
-                    img(src="images/Dark.png")
-                    input#dark(type='radio', name='options', autocomplete='off')
-                    |  Dark
-                label.btn.btn-primary
-                    img(src="images/Street.png")
-                    input#street(type='radio', name='options', autocomplete='off')
-                    |  Street
+        #page-content-wrapper
+            #d1
+                .btn-group-vertical(data-toggle='buttons')
+                    label.btn.btn-default.disabled
+                        input(type='radio', name='options', autocomplete='off', disabled='true')
+                        |  Style:
+                    label.btn.btn-primary.active
+                        img(src="images/App.png")
+                        input#style(type='radio', name='options', autocomplete='off', checked='')
+                        |  App
+                    label.btn.btn-primary
+                        img(src="images/Basic.png")
+                        input#basic(type='radio', name='options', autocomplete='off')
+                        |  Basic
+                    label.btn.btn-primary
+                        img(src="images/Light.png")
+                        input#light(type='radio', name='options', autocomplete='off')
+                        |  Light
+                    label.btn.btn-primary
+                        img(src="images/Dark.png")
+                        input#dark(type='radio', name='options', autocomplete='off')
+                        |  Dark
+                    label.btn.btn-primary
+                        img(src="images/Street.png")
+                        input#street(type='radio', name='options', autocomplete='off')
+                        |  Street
 
-        #d2
-            form(role='form')
-                .form-group
-                    input#searchinput.form-control(type='search', placeholder='Search...')
-                #searchlist.list-group
-                    for point in points
-                        a.list-group-item.vehicle(href='#')
-                            span= point.properties.plate
-            script.
-                $('#searchlist').btsListFilter('#searchinput', {itemChild: 'span'});
-
-        #d3
-            .table-responsive-vertical.shadow-z-1
-                // Table starts here
-                table#table.table.table-hover.table-mc-light-blue
-                    thead
-                        tr
-                            th Plate
-                            th Name
-                            th Coords
-                            th Speed
-                            th Distance
-                            th Last update
-                    tbody
+            #d2
+                form(role='form')
+                    .form-group
+                        input#searchinput.form-control(type='search', placeholder='Search...')
+                    #searchlist.list-group
                         for point in points
+                            a.list-group-item.vehicle(href='#')
+                                span= point.properties.plate
+                script.
+                    $('#searchlist').btsListFilter('#searchinput', {itemChild: 'span'});
+
+            #d3
+                .table-responsive-vertical.shadow-z-1
+                    // Table starts here
+                    table#table.table.table-hover.table-mc-light-blue
+                        thead
                             tr
-                                td(data-title='Plate')= point.properties.plate
-                                td(data-title='Name')= point.properties.title
-                                td(data-title='Coords')= point.geometry.coordinates
-                                td(data-title='Speed')= point.properties.speed
-                                td(data-title='Distance')= point.properties.distance
-                                td(data-title='Last update')= point.properties.date
+                                th Plate
+                                th Name
+                                th Coords
+                                th Speed
+                                th Distance
+                                th Last update
+                        tbody
+                            for point in points
+                                tr
+                                    td(data-title='Plate')= point.properties.plate
+                                    td(data-title='Name')= point.properties.title
+                                    td(data-title='Coords')= point.geometry.coordinates
+                                    td(data-title='Speed')= point.properties.speed
+                                    td(data-title='Distance')= point.properties.distance
+                                    td(data-title='Last update')= point.properties.date
 
-        #map
+            #map
 
-        #historyModal.modal.material-modal.material-modal_primary.fade
-            .modal-dialog
-                .modal-content.material-modal__content
-                    .modal-header.material-modal__header
-                        button.close.material-modal__close(data-dismiss='modal') ×
-                        h4.modal-title.material-modal__title Modal title
-                    .modal-body.material-modal__body
-                        .panel-group.material-tabs-group
-                            ul.nav.nav-tabs.material-tabs.material-tabs_primary
-                                li.active
-                                    a.material-tabs__tab-link(href='#speedChartTab', data-toggle='tab') Speed
-                                li
-                                    a.material-tabs__tab-link(href='#distanceChartTab', data-toggle='tab') Distance
-                                li
-                                    a.material-tabs__tab-link.material-tabs__tab-link_disabled(href='javascript:void(0)') disabled
-                            .tab-content.materail-tabs-content
-                                #speedChartTab.tab-pane.fade.active.in
-                                    canvas#speedChart(width='200', height='200')
-                                #distanceChartTab.tab-pane.fade
-                                    canvas#distanceChart(width='200', height='200')
-                    .modal-footer.material-modal__footer
-                        button.btn.material-btn.material-btn(data-dismiss='modal') Close
-                        button.btn.btn-primary.material-btn.material-btn_primary Save changes
+            #historyModal.modal.material-modal.material-modal_primary.fade
+                .modal-dialog
+                    .modal-content.material-modal__content
+                        .modal-header.material-modal__header
+                            button.close.material-modal__close(data-dismiss='modal') ×
+                            h4.modal-title.material-modal__title Modal title
+                        .modal-body.material-modal__body
+                            .panel-group.material-tabs-group
+                                ul.nav.nav-tabs.material-tabs.material-tabs_primary
+                                    li.active
+                                        a.material-tabs__tab-link(href='#speedChartTab', data-toggle='tab') Speed
+                                    li
+                                        a.material-tabs__tab-link(href='#distanceChartTab', data-toggle='tab') Distance
+                                    li
+                                        a.material-tabs__tab-link.material-tabs__tab-link_disabled(href='javascript:void(0)') disabled
+                                .tab-content.materail-tabs-content
+                                    #speedChartTab.tab-pane.fade.active.in
+                                        canvas#speedChart(width='200', height='200')
+                                    #distanceChartTab.tab-pane.fade
+                                        canvas#distanceChart(width='200', height='200')
+                        .modal-footer.material-modal__footer
+                            button.btn.material-btn.material-btn(data-dismiss='modal') Close
+                            button.btn.btn-primary.material-btn.material-btn_primary Save changes
 
-        script(type='text/javascript').
-            var bounds = [
-                [-185.0, -85.0], // Southwest coordinates
-                [185.0, 85.0]  // Northeast coordinates
-            ];
-            var map = getMap({
-                container: 'map',
-                center: [0, 0],
-                zoom: 1.01,
-                bearing: 0,
-                pitch: 0,
-                minZoom: 1,
-                style: '/styles/style.json',
-                maxBounds: bounds
-            }, !{JSON.stringify(points)});
+            script(type='text/javascript').
+                var bounds = [
+                    [-185.0, -85.0], // Southwest coordinates
+                    [185.0, 85.0]  // Northeast coordinates
+                ];
+                var map = getMap({
+                    container: 'map',
+                    center: [0, 0],
+                    zoom: 1.01,
+                    bearing: 0,
+                    pitch: 0,
+                    minZoom: 1,
+                    style: '/styles/style.json',
+                    maxBounds: bounds
+                }, !{JSON.stringify(points)});
 
-            $.periodic({period: 10000, decay: 1, max_period: 60000}, function() {
-                $.ajax({
-                    url: '/update',
-                    success: function(data) {
-                        movePoints(data, map);
-                    },
-                    complete: this.ajax_complete,
-                    dataType: 'json'
+                /*$.periodic({period: 10000, decay: 1, max_period: 60000}, function() {
+                 $.ajax({
+                 url: '/update',
+                 success: function(data) {
+                 movePoints(data, map);
+                 },
+                 complete: this.ajax_complete,
+                 dataType: 'json'
+                 });
+                 });*/
+
+                var socket = io();
+                socket.on('change', function(data) {
+                    console.log(data);
                 });
-            });
