@@ -4,38 +4,16 @@ var router = express.Router();
 
 var mongoose = require('mongoose');
 mongoose.connect('localhost:27017/vehicles');
-var Schema = mongoose.Schema;
 
 var MBTiles = require('mbtiles');
 var p = require("path");
 
-var vehicleObject = {
-    type: {type: String, required: true},
-    geometry: {
-        type: {type: String},
-        coordinates: [Number],
-    },
-    properties: {
-        title: String,
-        icon: String,
-        speed: Number,
-        distance: Number,
-        plate: {type: String, required: true},
-        date: Date
-    }
-}
-
-var vehicleDataSchema = new Schema(vehicleObject, {collection: 'vehicles'});
-var vehicleHistoryDataSchema = new Schema(vehicleObject, {collection: 'vehiclesHistory'});
-
-var vehicleData = mongoose.model('vehicleData', vehicleDataSchema);
-var vehicleHistoryData = mongoose.model('vehicleHistoryData', vehicleHistoryDataSchema);
-
+var models = require('../models/vehicle');
 var selectObject = {type:1, geometry:1, properties:1, _id:0};
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    vehicleData.find({}, selectObject)
+    models.vehicleData.find({}, selectObject)
         .then(function(doc) {
             res.render('index', {
                 points: doc,
@@ -45,7 +23,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/update', function(req, res, next) {
-    vehicleData.find({}, selectObject)
+    models.vehicleData.find({}, selectObject)
         .then(function(doc) {
             res.send(JSON.stringify(doc));
         });
@@ -55,10 +33,10 @@ router.get('/info/:plate', function(req, res, next) {
     var plate = req.params.plate;
     var vehicle = {};
     console.log(plate);
-    vehicleData.find({'properties.plate': plate}, selectObject)
+    models.vehicleData.find({'properties.plate': plate}, selectObject)
         .then(function(doc) {
             vehicle.current = doc;
-            vehicleHistoryData.find({'properties.plate': plate}, selectObject)
+            models.vehicleHistoryData.find({'properties.plate': plate}, selectObject)
                 .then(function(doc) {
                     vehicle.history = doc;
                     res.send(JSON.stringify(vehicle));
@@ -68,7 +46,7 @@ router.get('/info/:plate', function(req, res, next) {
 
 router.post('/insert', function(req, res, next) {
     console.log(JSON.parse(req.body.vehicleData));
-    vehicleHistoryData.collection.insertMany(JSON.parse(req.body.vehicleData), function(err, r) {
+    models.vehicleHistoryData.collection.insertMany(JSON.parse(req.body.vehicleData), function(err, r) {
         if (err) {
             console.log(err);
         }
