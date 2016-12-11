@@ -85,7 +85,10 @@ function getMap(options, pointData) {
                 dataType: 'json'
             });
 
-            map.flyTo({center: pointFeatures[0].geometry.coordinates, zoom: 10});
+            map.flyTo({
+                center: pointFeatures[0].geometry.coordinates,
+                zoom: map.getZoom() > 10 ? map.getZoom() : map.getZoom() + 2
+            });
 
             var popupDiv = getPopup({
                 plate: pointFeatures[0].properties.plate,

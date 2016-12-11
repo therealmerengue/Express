@@ -6,9 +6,8 @@ var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/vehicles');
 
 var models = require('../models/vehicle');
-var selectObject = {type:1, geometry:1, properties:1, _id:0};
+var selectObject = {type:1, geometry:1, properties:1, _id:1};
 
-/* GET home page. */
 router.get('/', function(req, res, next) {
     models.vehicleData.find({}, selectObject)
         .then(function(doc) {
@@ -16,13 +15,6 @@ router.get('/', function(req, res, next) {
                 points: doc,
                 title: 'Tracking App'
             });
-        });
-});
-
-router.get('/update', function(req, res, next) {
-    models.vehicleData.find({}, selectObject)
-        .then(function(doc) {
-            res.send(JSON.stringify(doc));
         });
 });
 
@@ -43,7 +35,9 @@ router.get('/info/:plate', function(req, res, next) {
 
 router.post('/insert', function(req, res, next) {
     console.log(JSON.parse(req.body.vehicleData));
-    models.vehicleHistoryData.collection.insertMany(JSON.parse(req.body.vehicleData), function(err, r) {
+    var document = JSON.parse(req.body.vehicleData);
+    delete document[0]._id;
+    models.vehicleHistoryData.collection.insertMany(document, function(err, r) {
         if (err) {
             console.log(err);
         }

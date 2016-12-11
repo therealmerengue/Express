@@ -19,7 +19,7 @@ var vehicleObject = {
 }
 
 var vehicleDataSchema = new Schema(vehicleObject, {collection: 'vehicles'});
-var vehicleHistoryDataSchema = new Schema(vehicleObject, {collection: 'vehiclesHistory'});
+var vehicleHistoryDataSchema = new Schema(vehicleObject, {collection: 'history'});
 
 var vehicleData = mongoose.model('vehicleData', vehicleDataSchema);
 var vehicleHistoryData = mongoose.model('vehicleHistoryData', vehicleHistoryDataSchema);

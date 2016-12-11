@@ -1,30 +1,27 @@
 var socketIO = require('socket.io')();
 
 var MongoOplog = require('mongo-oplog');
-var oplog = MongoOplog('mongodb://localhost:27017/local', { ns: 'vehicles.vehicles' }).tail();
+var oplog = MongoOplog('mongodb://localhost:27017/local', {
+    ns: 'vehicles.vehicles' }).tail();
 var models = require('../models/vehicle');
-
-var sendChanged = function(doc) {
-    var id = doc.o2._id;
-    models.vehicleData.find({"_id": id}, {type:1, geometry:1, properties:1, _id:0})
-        .then(function(data) {
-            socketIO.emit('change', JSON.stringify(data));
-        });
-};
 
 oplog.on('insert', function(doc) {
     console.log(doc);
-    sendChanged(doc);
+    socketIO.emit('insert', doc.o);
 });
 
 oplog.on('update', function(doc) {
     console.log(doc);
-    sendChanged(doc);
+    var id = doc.o2._id;
+    models.vehicleData.find({"_id": id}, {type:1, geometry:1, properties:1, _id:1})
+        .then(function(data) {
+            socketIO.emit('change', JSON.stringify(data));
+        });
 });
 
 oplog.on('delete', function(doc) {
-    console.log(doc.o._id);
-    sendChanged(doc);
+    console.log(doc);
+    socketIO.emit('delete', doc.o);
 });
 
 oplog.on('error', function(error) {
