@@ -2,7 +2,9 @@ var socketIO = require('socket.io')();
 
 var MongoOplog = require('mongo-oplog');
 var oplog = MongoOplog('mongodb://localhost:27017/local', {
-    ns: 'vehicles.vehicles' }).tail();
+    ns: 'vehicles.vehicles'
+}).tail();
+
 var models = require('../models/vehicle');
 
 oplog.on('insert', function(doc) {

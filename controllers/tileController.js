@@ -1,6 +1,3 @@
-var express = require('express');
-var router = express.Router();
-
 var MBTiles = require('mbtiles');
 var p = require("path");
 
@@ -33,9 +30,8 @@ function getContentType(t) {
     return header;
 }
 
-// tile cannon
-router.get('/:s/:z/:x/:y.:t', function(req, res) {
-    new MBTiles(p.join(tilesDir, 'planet.mbtiles'), function(err, mbtiles) {
+module.exports.getTile = function(req, res) {
+    new MBTiles(p.join(tilesDir, '../planet.mbtiles'), function(err, mbtiles) {
         mbtiles.getTile(req.params.z, req.params.x, req.params.y, function(err, tile, headers) {
             if (err) {
                 res.set({"Content-Type": "text/plain"});
@@ -47,6 +43,4 @@ router.get('/:s/:z/:x/:y.:t', function(req, res) {
         });
         if (err) console.log("error opening database");
     });
-});
-
-module.exports = router;
+};

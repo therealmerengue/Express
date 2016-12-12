@@ -70,36 +70,10 @@ function getMap(options, pointData) {
     });
 
     map.on('click', function(e) {
-        // Use queryRenderedFeatures to get features at a click event's point
-        // Use layer option to avoid getting results from other layers
         var pointFeatures = map.queryRenderedFeatures(e.point, {layers: ['points']});
-        // if there are features within the given radius of the click event,
-        // fly to the location of the click event
+
         if (pointFeatures.length) {
-            $.ajax({
-                url: '/info/' + pointFeatures[0].properties.plate.replace(/\s/g, '%20'),
-                success: function(data) {
-                   presentData(data);
-                },
-                complete: this.ajax_complete,
-                dataType: 'json'
-            });
-
-            map.flyTo({
-                center: pointFeatures[0].geometry.coordinates,
-                zoom: map.getZoom() > 10 ? map.getZoom() : map.getZoom() + 2
-            });
-
-            var popupDiv = getPopup({
-                plate: pointFeatures[0].properties.plate,
-                speed: pointFeatures[0].properties.speed,
-                distance: pointFeatures[0].properties.distance
-            });
-            //display pop up with coords
-            new mapboxgl.Popup()
-                .setLngLat(pointFeatures[0].geometry.coordinates)
-                .setDOMContent(popupDiv)
-                .addTo(map);
+            vehicleController.getVehicle(pointFeatures[0].properties.plate.replace(/\s/g, '%20'));
         }
 
         var clusterFeatures = map.queryRenderedFeatures(e.point, {layers: ['cluster-0', 'cluster-1', 'cluster-2']});
@@ -111,8 +85,6 @@ function getMap(options, pointData) {
         }
     });
 
-    // Use the same approach as above to indicate that the symbols are clickable
-    // by changing the cursor style to 'pointer'.
     map.on('mousemove', function (e) {
         var features = map.queryRenderedFeatures(e.point, {layers: ['points', 'cluster-0', 'cluster-1', 'cluster-2']});
         map.getCanvas().style.cursor = features.length ? 'pointer' : '';

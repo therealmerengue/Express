@@ -1,20 +1,4 @@
 var pointModule = (function() {
-    function makeHistoryPostRequest(preChangedPoints) {
-        $.ajax({
-            type: "POST",
-            url: "/insert",
-            dataType: "json",
-            data: {
-                vehicleData: JSON.stringify(preChangedPoints)
-            },
-            success: function (data) {
-                console.log('Success inserting data');
-            },
-            error: function () {
-                console.log('Error inserting data');
-            }
-        });
-    }
 
     function sortByPlate(v1, v2) {
         var plate1 = v1.properties.plate;
@@ -36,7 +20,7 @@ var pointModule = (function() {
         for (var i = 0; i < currentPoints.length; i++) {
             if (currentPoints[i].properties.plate == parsed[0].properties.plate) {
                 console.log(currentPoints[i]);
-                makeHistoryPostRequest([currentPoints[i]]);
+                vehicleController.insertVehicleHistory([currentPoints[i]]);
                 currentPoints[i] = parsed[0];
                 setSourceData(currentPoints);
                 break;
@@ -58,7 +42,7 @@ var pointModule = (function() {
         for (var i = 0; i < currentPoints.length; i++) {
             if (currentPoints[i]._id == point._id) {
                 console.log(currentPoints[i]);
-                makeHistoryPostRequest([currentPoints[i]]);
+                vehicleController.insertVehicleHistory([currentPoints[i]]);
                 currentPoints.splice(i, 1);
                 break;
             }
