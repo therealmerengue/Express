@@ -5,7 +5,11 @@ var router = express.Router();
 var tileController = require('../controllers/tileController');
 var vehicleController = require('../controllers/vehicleController');
 
-router.get('/', vehicleController.getVehicles);
+router.get('/', function(req, res) {
+    res.render('index');
+});
+
+router.get('/all', vehicleController.getVehicles);
 
 router.get('/info/:plate', vehicleController.getVehicle);
 

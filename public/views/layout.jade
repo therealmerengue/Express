@@ -1,5 +1,5 @@
 doctype html
-html
+html(ng-app='trackingApp')
     head
         title= title
         link(rel='stylesheet', href='/stylesheets/map.css')
@@ -30,10 +30,11 @@ html
         script(src='http://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js')
         script(src='https://cdn.socket.io/socket.io-1.4.5.js')
         script(src='/javascripts/pointModule.js')
+
+        script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js')
+        script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js')
+        script(src='/javascripts/app.js')
         script(src='/javascripts/controllers/vehicleController.js')
 
-        script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js')
-        script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-resource.js')
-
-    body
+    body(ng-controller='VehicleController')
         block content

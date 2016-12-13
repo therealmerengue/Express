@@ -18,23 +18,23 @@ block content
                     label.btn.btn-default.disabled
                         input(type='radio', name='options', autocomplete='off', disabled='true')
                         |  Style:
-                    label.btn.btn-primary.active
+                    label.btn.btn-primary.active(ng-click='setStyle(styles[0])')
                         img(src="images/App.png")
                         input#style(type='radio', name='options', autocomplete='off', checked='')
                         |  App
-                    label.btn.btn-primary
+                    label.btn.btn-primary(ng-click='setStyle(styles[1])')
                         img(src="images/Basic.png")
                         input#basic(type='radio', name='options', autocomplete='off')
                         |  Basic
-                    label.btn.btn-primary
+                    label.btn.btn-primary(ng-click='setStyle(styles[2])')
                         img(src="images/Light.png")
                         input#light(type='radio', name='options', autocomplete='off')
                         |  Light
-                    label.btn.btn-primary
+                    label.btn.btn-primary(ng-click='setStyle(styles[3])')
                         img(src="images/Dark.png")
                         input#dark(type='radio', name='options', autocomplete='off')
                         |  Dark
-                    label.btn.btn-primary
+                    label.btn.btn-primary(ng-click='setStyle(styles[4])')
                         img(src="images/Street.png")
                         input#street(type='radio', name='options', autocomplete='off')
                         |  Street
@@ -44,9 +44,8 @@ block content
                     .form-group
                         input#searchinput.form-control(type='search', placeholder='Search...')
                     #searchlist.list-group
-                        for point in points
-                            a.list-group-item.vehicle(href='#')
-                                span= point.properties.plate
+                        a.list-group-item.vehicle(href='#', ng-repeat='point in points', ng-click='getVehicle(point.properties.plate)')
+                            span {{point.properties.plate}}
                 script.
                     $('#searchlist').btsListFilter('#searchinput', {itemChild: 'span'});
 
@@ -63,14 +62,13 @@ block content
                                 th Distance
                                 th Last update
                         tbody
-                            for point in points
-                                tr
-                                    td(data-title='Plate')= point.properties.plate
-                                    td(data-title='Name')= point.properties.title
-                                    td(data-title='Coords')= point.geometry.coordinates
-                                    td(data-title='Speed')= point.properties.speed
-                                    td(data-title='Distance')= point.properties.distance
-                                    td(data-title='Last update')= point.properties.date
+                            tr(ng-repeat='point in points')
+                                td(data-title='Plate') {{point.properties.plate}}
+                                td(data-title='Name') {{point.properties.title}}
+                                td(data-title='Coords') {{point.geometry.coordinates}}
+                                td(data-title='Speed') {{point.properties.speed}}
+                                td(data-title='Distance') {{point.properties.distance}}
+                                td(data-title='Last update') {{point.properties.date}}
 
             #map
 
@@ -97,33 +95,3 @@ block content
                         .modal-footer.material-modal__footer
                             button.btn.material-btn.material-btn(data-dismiss='modal') Close
                             button.btn.btn-primary.material-btn.material-btn_primary Save changes
-
-            script(type='text/javascript').
-                var bounds = [
-                    [-185.0, -85.0], // Southwest coordinates
-                    [185.0, 85.0]  // Northeast coordinates
-                ];
-                var map = getMap({
-                    container: 'map',
-                    center: [0, 0],
-                    zoom: 1.01,
-                    bearing: 0,
-                    pitch: 0,
-                    minZoom: 1,
-                    style: '/styles/style.json',
-                    maxBounds: bounds
-                }, !{JSON.stringify(points)});
-
-                var socket = io();
-                socket.on('change', function(data) {
-                    console.log(data);
-                    pointModule.updatePoint(data, map);
-                });
-                socket.on('insert', function(data) {
-                    console.log(data);
-                    pointModule.insertPoint(data, map);
-                });
-                socket.on('delete', function(data) {
-                    console.log(data);
-                    pointModule.deletePoint(data, map);
-                });

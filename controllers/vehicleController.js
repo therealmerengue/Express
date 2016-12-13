@@ -7,10 +7,7 @@ var selectObject = {type:1, geometry:1, properties:1, _id:1};
 module.exports.getVehicles = function(req, res) {
     models.vehicleData.find({}, selectObject)
         .then(function(doc) {
-            res.render('index', {
-                points: doc,
-                title: 'Tracking App'
-            });
+            res.send(doc);
         });
 };
 
@@ -33,6 +30,7 @@ module.exports.insertVehicleHistory = function(req, res) {
     console.log(JSON.parse(req.body.vehicleData));
     var document = JSON.parse(req.body.vehicleData);
     delete document[0]._id;
+    delete document[0].$$hashKey;
     models.vehicleHistoryData.collection.insertMany(document, function(err, r) {
         if (err) {
             console.log(err);

@@ -1,4 +1,5 @@
 function getPopup(data) {
+    var map = angular.element('#map').scope().map;
     var popupDiv = window.document.createElement('div');
 
     var content = window.document.createElement('div');

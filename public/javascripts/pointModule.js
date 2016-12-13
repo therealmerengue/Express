@@ -6,7 +6,7 @@ var pointModule = (function() {
         return plate1.localeCompare(plate2);
     }
 
-    function setSourceData(features) {
+    function setSourceData(features, map) {
         map.getSource('points').setData({
             "type": "FeatureCollection",
             "features": features
@@ -20,9 +20,9 @@ var pointModule = (function() {
         for (var i = 0; i < currentPoints.length; i++) {
             if (currentPoints[i].properties.plate == parsed[0].properties.plate) {
                 console.log(currentPoints[i]);
-                vehicleController.insertVehicleHistory([currentPoints[i]]);
+                angular.element('#map').scope().insertVehicleHistory([currentPoints[i]]);
                 currentPoints[i] = parsed[0];
-                setSourceData(currentPoints);
+                setSourceData(currentPoints, map);
                 break;
             }
         }
@@ -34,7 +34,7 @@ var pointModule = (function() {
         currentPoints.push(point);
         currentPoints.sort(sortByPlate);
 
-        setSourceData(currentPoints);
+        setSourceData(currentPoints, map);
     }
 
     function deletePoint(point, map) {
@@ -42,12 +42,12 @@ var pointModule = (function() {
         for (var i = 0; i < currentPoints.length; i++) {
             if (currentPoints[i]._id == point._id) {
                 console.log(currentPoints[i]);
-                vehicleController.insertVehicleHistory([currentPoints[i]]);
+                angular.element('#map').scope().insertVehicleHistory([currentPoints[i]]);
                 currentPoints.splice(i, 1);
                 break;
             }
         }
-        setSourceData(currentPoints);
+        setSourceData(currentPoints, map);
     }
 
     return {

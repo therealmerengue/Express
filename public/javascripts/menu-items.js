@@ -31,7 +31,7 @@ $(document).ready(function() {
                     toggledElement.css('width', '30%');
             });
 
-        }
+        };
 
         for (var i = 1; i <= 3; i++) {
             var name = '#d';
@@ -45,15 +45,4 @@ $(document).ready(function() {
         }
         toggleElement();
     });
-
-    $('label.btn-primary').on('click', function() {
-        map.setStyle('/styles/' + $(this).find('input').attr('id') + '.json');
-    });
-
-    $('.vehicle').on('click', function() {
-        vehicleController.getVehicle($(this).find('span').html().replace(/\s/g, '%20'));
-    });
 });
-
-
-
