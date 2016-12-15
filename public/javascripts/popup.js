@@ -2,6 +2,8 @@ function getPopup(data) {
     var map = angular.element('#map').scope().map;
     var popupDiv = window.document.createElement('div');
 
+    popupDiv.setAttribute('ng-controller', "VehicleController");
+
     var content = window.document.createElement('div');
     content.setAttribute('class', 'content panel panel-default material-panel material-panel_primary');
 
@@ -36,6 +38,7 @@ function getPopup(data) {
     historyButton.setAttribute('data-toggle', 'modal');
     historyButton.setAttribute('data-target', '#historyModal');
     historyButton.setAttribute('href', '#historyModal');
+
     historyButton.setAttribute('role', 'button');
     historyButton.setAttribute('style', 'display: block;');
     historyButton.innerHTML = 'Show history';

@@ -33,7 +33,7 @@ $(document).ready(function() {
 
         };
 
-        for (var i = 1; i <= 3; i++) {
+        for (var i = 1; i <= 4; i++) {
             var name = '#d';
             name += i;
             if ($(name).is(":visible") && toggledElement.attr("id") != name.substring(1)) {

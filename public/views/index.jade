@@ -1,7 +1,7 @@
 extends layout
 
 block content
-    #wrapper
+    #wrapper(ng-controller='VehicleController')
         #sidenav-wrapper
             nav.sidenav
                 ul.sidenav-list
@@ -72,13 +72,15 @@ block content
 
             #map
 
-            #historyModal.modal.material-modal.material-modal_primary.fade
+            #historyModal.modal.animated.bounceIn(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
                 .modal-dialog
-                    .modal-content.material-modal__content
-                        .modal-header.material-modal__header
-                            button.close.material-modal__close(data-dismiss='modal') ×
-                            h4.modal-title.material-modal__title Modal title
-                        .modal-body.material-modal__body
+                    .modal-content
+                        .modal-header
+                            h1#modalLabel.modal-title
+                                | Modal title
+                            button.btn.btn-secondary.btn-close(data-dismiss='modal')
+                                | Close
+                        .modal-body
                             .panel-group.material-tabs-group
                                 ul.nav.nav-tabs.material-tabs.material-tabs_primary
                                     li.active
@@ -89,9 +91,13 @@ block content
                                         a.material-tabs__tab-link.material-tabs__tab-link_disabled(href='javascript:void(0)') disabled
                                 .tab-content.materail-tabs-content
                                     #speedChartTab.tab-pane.fade.active.in
-                                        canvas#speedChart(width='200', height='200')
+                                        .chartDiv
+                                            canvas#speedChart(width='400', height='400')
                                     #distanceChartTab.tab-pane.fade
-                                        canvas#distanceChart(width='200', height='200')
-                        .modal-footer.material-modal__footer
-                            button.btn.material-btn.material-btn(data-dismiss='modal') Close
-                            button.btn.btn-primary.material-btn.material-btn_primary Save changes
+                                        .chartDiv
+                                            canvas#distanceChart(width='400', height='400')
+                        .modal-footer
+                            button.btn.btn-default
+                                | Default
+                            button.btn.btn-primary
+                                | Primary

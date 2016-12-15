@@ -23,7 +23,8 @@ function createChart(context, labels, data, legendLabel) {
                     }
                 }]
             }
-        }
+        },
+        responsive: true
     });
 }
 

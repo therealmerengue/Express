@@ -1,7 +1,7 @@
 doctype html
 html(ng-app='trackingApp')
     head
-        title= title
+        title Tracking App
         link(rel='stylesheet', href='/stylesheets/map.css')
         link(rel='stylesheet', href='/stylesheets/style.css')
         link(rel='stylesheet', href='/stylesheets/table.css')
@@ -12,6 +12,7 @@ html(ng-app='trackingApp')
         link(rel='stylesheet', href='/stylesheets/bootstrap-theme.css')
         link(rel='stylesheet', href='https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css')
         link(rel='stylesheet', href='http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css')
+        link(rel='stylesheet', href='/stylesheets/modal.css')
 
         script(src='/javascripts/lib/mapbox-gl-26.js')
         script(src='/javascripts/popup.js')
@@ -36,5 +37,5 @@ html(ng-app='trackingApp')
         script(src='/javascripts/app.js')
         script(src='/javascripts/controllers/vehicleController.js')
 
-    body(ng-controller='VehicleController')
+    body
         block content

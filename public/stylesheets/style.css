@@ -76,3 +76,21 @@ li.sidenav-list-item > a.active {
 .sidenav-list-item a {
     color: #337ab7;
 }
+
+.modal.modal-wide .modal-dialog {
+    width: 90%;
+}
+
+.chartDiv {
+    width: 40%;
+    height: 40%;
+}
+
+.btn-close {
+    float: right;
+    margin-bottom: 30%;
+}
+
+#modalLabel {
+    display: inline-block;
+}
