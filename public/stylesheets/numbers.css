@@ -1,0 +1,61 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto);
+*, *:before, *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+}
+
+.positive {
+    color: #7eb348;
+}
+
+.negative {
+    color: #cf3636;
+}
+
+.neutral {
+    color: #3c7dcf;
+}
+
+.issuance {
+    color: #76a346 !important;
+}
+
+.redemption {
+    color: #1fc8f8 !important;
+}
+
+.small {
+    font-size: 0.6em;
+}
+
+.padded {
+    padding: 1rem;
+}
+
+.value-list {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.value-list li {
+    margin: 0;
+    padding: 5px;
+}
+
+.value-list .description {
+    color: #666666;
+    font-size: 14px;
+    line-height: 10px;
+}
+
+.value-list .value {
+    color: #FFFFFF;
+    font-size: 45px;
+}

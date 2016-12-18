@@ -1,10 +1,20 @@
 var app = angular.module('trackingApp');
 
-app.controller('VehicleController', ['$scope', '$http',
-    function($scope, $http) {
+var selectedPoint = {};
+
+app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
+    function($scope, $http, $window, $timeout) {
         console.log('VehicleController loaded...');
+
+        var updateChart = function(chart, label, newData) {
+            chart.data.labels.push(label); // add new label at end
+            chart.data.labels.splice(0, 1); // remove first label
+            chart.data.datasets[0].data.push(newData);
+            chart.data.datasets[0].data.splice(0, 1);
+            chart.update();
+        };
+
         $http.get('/all').success(function(response) {
-            console.log(response);
             $scope.points = response;
             var map = getMap({
                 container: 'map',
@@ -21,18 +31,37 @@ app.controller('VehicleController', ['$scope', '$http',
             }, response);
 
             var socket = io();
+
             socket.on('change', function(data) {
                 console.log(data);
                 pointModule.updatePoint(data, map);
+                var parsed = JSON.parse(data);
+                if (parsed[0].properties.plate == $scope.plate) {
+                    updateChart($scope.charts[0], parsed[0].properties.date, parsed[0].properties.speed);
+                    updateChart($scope.charts[1], parsed[0].properties.date, parsed[0].properties.distance);
+                }
             });
+
             socket.on('insert', function(data) {
                 console.log(data);
                 pointModule.insertPoint(data, map);
             });
+
             socket.on('delete', function(data) {
                 console.log(data);
                 pointModule.deletePoint(data, map);
             });
+
+            socket.on('vehicleSent', function(data) {
+                if ($scope.charts != undefined) {
+                    for (var i = 0; i < $scope.charts.length; i++) {
+                        $scope.charts[i].destroy();
+                    }
+                }
+                $scope.charts = presentData(data);
+            });
+
+            $scope.socket = socket;
 
             $scope.map = map;
         });
@@ -43,23 +72,23 @@ app.controller('VehicleController', ['$scope', '$http',
             $scope.map.setStyle(style);
         };
 
-        $scope.getVehicle = function(plate) {
-            $http.get('/info/' + plate).success(function(response) {
-                presentData(response);
-                $scope.map.flyTo({
-                    center: response.current[0].geometry.coordinates,
-                    zoom: $scope.map.getZoom() < 11 ? 11 : $scope.map.getZoom()
-                });
-                var popupDiv = getPopup({
-                    plate: response.current[0].properties.plate,
-                    speed: response.current[0].properties.speed,
-                    distance: response.current[0].properties.distance
-                });
-                new mapboxgl.Popup()
-                    .setLngLat(response.current[0].geometry.coordinates)
-                    .setDOMContent(popupDiv)
-                    .addTo($scope.map);
+        $scope.getVehicleSocket = function(point) {
+            if (!angular.element('#info-pane').scope().checked) {
+                $timeout(function () {
+                    angular.element(document.querySelector('#info-button')).trigger('click');
+                }, 0);
+            }
+
+            $scope.map.flyTo({
+                center: point.geometry.coordinates,
+                zoom: $scope.map.getZoom() < 11 ? 11 : $scope.map.getZoom()
             });
+
+            if (point != $window.selectedPoint)
+                $scope.socket.emit('getVehicle', { plate: point.properties.plate });
+
+            $scope.selectedPoint = point;
+            $window.selectedPoint = $scope.plate;
         };
 
         $scope.insertVehicleHistory = function(preChangedPoints) {

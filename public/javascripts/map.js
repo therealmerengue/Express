@@ -73,8 +73,7 @@ function getMap(options, pointData) {
         var pointFeatures = map.queryRenderedFeatures(e.point, {layers: ['points']});
 
         if (pointFeatures.length) {
-            //vehicleController.getVehicle(pointFeatures[0].properties.plate.replace(/\s/g, '%20'));
-            angular.element('#map').scope().getVehicle(pointFeatures[0].properties.plate.replace(/\s/g, '%20'));
+            angular.element('#map').scope().getVehicleSocket(pointFeatures[0]);
         }
 
         var clusterFeatures = map.queryRenderedFeatures(e.point, {layers: ['cluster-0', 'cluster-1', 'cluster-2']});

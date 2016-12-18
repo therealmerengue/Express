@@ -11,8 +11,6 @@ router.get('/', function(req, res) {
 
 router.get('/all', vehicleController.getVehicles);
 
-router.get('/info/:plate', vehicleController.getVehicle);
-
 router.post('/insert', vehicleController.insertVehicleHistory);
 
 router.get('/:s/:z/:x/:y.:t', tileController.getTile);

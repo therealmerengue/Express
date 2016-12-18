@@ -2,73 +2,80 @@ extends layout
 
 block content
     #wrapper(ng-controller='VehicleController')
+
         #sidenav-wrapper
+
             nav.sidenav
+
                 ul.sidenav-list
+
                     li.sidenav-list-item
-                        a(href="#d1", data-toggle="tooltip", title="Change style", data-placement="right"): i(class="fa fa-paint-brush")
+                        #style-pane.side-panel(ng-controller="sidePanelController")
+                            a(href='', ng-click='toggle()'): i(class="fa fa-paint-brush")
+                            .pageslide(pageslide ps-open='checked', ps-speed='0.25', ps-side="left")
+                                div(style='padding:20px')
+                                    .btn-group-vertical(data-toggle='buttons')
+                                        label.btn.btn-default.disabled
+                                            input(type='radio', name='options', autocomplete='off', disabled='true')
+                                            |  Style:
+                                        label.btn.btn-primary.active(ng-click='setStyle(styles[0])')
+                                            img(src="images/App.png")
+                                            input#style(type='radio', name='options', autocomplete='off', checked='')
+                                            |  App
+                                        label.btn.btn-primary(ng-click='setStyle(styles[1])')
+                                            img(src="images/Basic.png")
+                                            input#basic(type='radio', name='options', autocomplete='off')
+                                            |  Basic
+                                        label.btn.btn-primary(ng-click='setStyle(styles[2])')
+                                            img(src="images/Light.png")
+                                            input#light(type='radio', name='options', autocomplete='off')
+                                            |  Light
+                                        label.btn.btn-primary(ng-click='setStyle(styles[3])')
+                                            img(src="images/Dark.png")
+                                            input#dark(type='radio', name='options', autocomplete='off')
+                                            |  Dark
+                                        label.btn.btn-primary(ng-click='setStyle(styles[4])')
+                                            img(src="images/Street.png")
+                                            input#street(type='radio', name='options', autocomplete='off')
+                                            |  Street
+
                     li.sidenav-list-item
-                        a(href="#d2", data-toggle="tooltip", title="Vehicle list", data-placement="right"): i(class="fa fa-list")
+                        #search-pane.side-panel(ng-controller="sidePanelController")
+                            a(href='', ng-click='toggle()'): i(class="fa fa-list")
+                            .pageslide(pageslide ps-open='checked', ps-speed='0.25', ps-side="left")
+                                div(style='padding:20px')
+                                    form(role='form')
+                                        .form-group
+                                            input#searchinput.form-control(type='search', placeholder='Search...')
+                                        #searchlist.list-group
+                                            a.list-group-item.vehicle(href='#', ng-repeat='point in points', ng-click='getVehicleSocket(point)')
+                                                span {{point.properties.plate}}
+                                    script.
+                                        $('#searchlist').btsListFilter('#searchinput', {itemChild: 'span'});
+
+
                     li.sidenav-list-item
-                        a(href="#d3"): i(class="fa fa-table")
+                        #info-pane.side-panel(ng-controller="infoPanelController")
+                            button#info-button.link-button(href='', ng-disabled='selectedPoint == null', ng-click='toggle()'): i(class="fa fa-table")
+                            #info-pageslide.pageslide(pageslide ps-open='checked', ps-speed='0.25', ps-side="left", ps-click-outside='false')
+                                .panel.panel-primary
+                                    .panel-heading {{selectedPoint.properties.plate}}
+                                    .panel-body
+                                        ul.value-list
+                                            li
+                                                .description Speed
+                                                .value
+                                                    span.neutral {{selectedPoint.properties.speed}} km/h
+                                            li
+                                                .description Distance
+                                                .value
+                                                    span.neutral {{selectedPoint.properties.distance}} km
+
+                                        a.btn.btn-primary(data-toggle='modal', data-target='#historyModal', href='#historyModal', role='button') Show history
+                                        a.btn.btn-default(ng-click='toggle()', role='button') Close
+
 
         #page-content-wrapper
-            #d1
-                .btn-group-vertical(data-toggle='buttons')
-                    label.btn.btn-default.disabled
-                        input(type='radio', name='options', autocomplete='off', disabled='true')
-                        |  Style:
-                    label.btn.btn-primary.active(ng-click='setStyle(styles[0])')
-                        img(src="images/App.png")
-                        input#style(type='radio', name='options', autocomplete='off', checked='')
-                        |  App
-                    label.btn.btn-primary(ng-click='setStyle(styles[1])')
-                        img(src="images/Basic.png")
-                        input#basic(type='radio', name='options', autocomplete='off')
-                        |  Basic
-                    label.btn.btn-primary(ng-click='setStyle(styles[2])')
-                        img(src="images/Light.png")
-                        input#light(type='radio', name='options', autocomplete='off')
-                        |  Light
-                    label.btn.btn-primary(ng-click='setStyle(styles[3])')
-                        img(src="images/Dark.png")
-                        input#dark(type='radio', name='options', autocomplete='off')
-                        |  Dark
-                    label.btn.btn-primary(ng-click='setStyle(styles[4])')
-                        img(src="images/Street.png")
-                        input#street(type='radio', name='options', autocomplete='off')
-                        |  Street
-
-            #d2
-                form(role='form')
-                    .form-group
-                        input#searchinput.form-control(type='search', placeholder='Search...')
-                    #searchlist.list-group
-                        a.list-group-item.vehicle(href='#', ng-repeat='point in points', ng-click='getVehicle(point.properties.plate)')
-                            span {{point.properties.plate}}
-                script.
-                    $('#searchlist').btsListFilter('#searchinput', {itemChild: 'span'});
-
-            #d3
-                .table-responsive-vertical.shadow-z-1
-                    // Table starts here
-                    table#table.table.table-hover.table-mc-light-blue
-                        thead
-                            tr
-                                th Plate
-                                th Name
-                                th Coords
-                                th Speed
-                                th Distance
-                                th Last update
-                        tbody
-                            tr(ng-repeat='point in points')
-                                td(data-title='Plate') {{point.properties.plate}}
-                                td(data-title='Name') {{point.properties.title}}
-                                td(data-title='Coords') {{point.geometry.coordinates}}
-                                td(data-title='Speed') {{point.properties.speed}}
-                                td(data-title='Distance') {{point.properties.distance}}
-                                td(data-title='Last update') {{point.properties.date}}
 
             #map
 
@@ -77,7 +84,7 @@ block content
                     .modal-content
                         .modal-header
                             h1#modalLabel.modal-title
-                                | Modal title
+                                | {{selectedPoint.properties.plate}}
                             button.btn.btn-secondary.btn-close(data-dismiss='modal')
                                 | Close
                         .modal-body
@@ -92,10 +99,10 @@ block content
                                 .tab-content.materail-tabs-content
                                     #speedChartTab.tab-pane.fade.active.in
                                         .chartDiv
-                                            canvas#speedChart(width='400', height='400')
+                                            canvas#speedChart.chart(width='500', height='500')
                                     #distanceChartTab.tab-pane.fade
                                         .chartDiv
-                                            canvas#distanceChart(width='400', height='400')
+                                            canvas#distanceChart.chart(width='500', height='500')
                         .modal-footer
                             button.btn.btn-default
                                 | Default

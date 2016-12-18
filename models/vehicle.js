@@ -6,7 +6,7 @@ var vehicleObject = {
     type: {type: String, required: true},
     geometry: {
         type: {type: String},
-        coordinates: [Number],
+        coordinates: [Number]
     },
     properties: {
         title: String,
@@ -26,5 +26,6 @@ var vehicleHistoryData = mongoose.model('vehicleHistoryData', vehicleHistoryData
 
 module.exports = {
     vehicleData: vehicleData,
-    vehicleHistoryData: vehicleHistoryData
+    vehicleHistoryData: vehicleHistoryData,
+    selectObject: {type: 1, geometry: 1, properties: 1, _id: 1}
 };
