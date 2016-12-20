@@ -14,6 +14,12 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
             chart.update();
         };
 
+        var triggerInfoButtonClick = function(clicks) {
+            for (var c = 0; c < clicks; c++) {
+                angular.element(document.querySelector('#info-button')).trigger('click');
+            }
+        };
+
         $http.get('/all').success(function(response) {
             $scope.points = response;
             var map = getMap({
@@ -36,9 +42,13 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
                 console.log(data);
                 pointModule.updatePoint(data, map);
                 var parsed = JSON.parse(data);
-                if (parsed[0].properties.plate == $scope.plate) {
-                    updateChart($scope.charts[0], parsed[0].properties.date, parsed[0].properties.speed);
-                    updateChart($scope.charts[1], parsed[0].properties.date, parsed[0].properties.distance);
+                if ($scope.selectedPoint != undefined && parsed[0].properties.plate == $scope.selectedPoint.properties.plate) {
+                    updateChart($scope.charts[0], parsed[0].properties.date.toString().substring(0, 19).replace('T', ' '), parsed[0].properties.speed);
+                    updateChart($scope.charts[1], parsed[0].properties.date.toString().substring(0, 19).replace('T', ' '), parsed[0].properties.distance);
+                    $scope.selectedPoint = parsed[0];
+                    $scope.map.flyTo({
+                        center: $scope.selectedPoint.geometry.coordinates
+                    });
                 }
             });
 
@@ -73,22 +83,25 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
         };
 
         $scope.getVehicleSocket = function(point) {
-            if (!angular.element('#info-pane').scope().checked) {
-                $timeout(function () {
-                    angular.element(document.querySelector('#info-button')).trigger('click');
-                }, 0);
-            }
-
-            $scope.map.flyTo({
-                center: point.geometry.coordinates,
-                zoom: $scope.map.getZoom() < 11 ? 11 : $scope.map.getZoom()
-            });
-
             if (point != $window.selectedPoint)
                 $scope.socket.emit('getVehicle', { plate: point.properties.plate });
 
+            if (!angular.element('#info-pane').scope().checked) {
+                $timeout(function() {
+                    triggerInfoButtonClick(1);
+                }, 0);
+            } else {
+                $timeout(function() {
+                    triggerInfoButtonClick(2);
+                }, 0);
+            }
+
             $scope.selectedPoint = point;
-            $window.selectedPoint = $scope.plate;
+            $window.selectedPoint = $scope.selectedPoint;
+
+            $scope.map.flyTo({
+                center: point.geometry.coordinates
+            });
         };
 
         $scope.insertVehicleHistory = function(preChangedPoints) {

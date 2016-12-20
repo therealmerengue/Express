@@ -6,12 +6,12 @@ function createChart(context, labels, data, legendLabel) {
             datasets: [{
                 label: legendLabel,
                 data: data,
-                backgroundColor: "rgba(0,160,160,0.2)",
-                borderColor: "rgba(0,160,160,1)",
-                pointBackgroundColor: "rgba(0,160,160,1)",
+                backgroundColor: "rgba(64, 146, 217, 0.2)",
+                borderColor: "rgba(64, 146, 217, 1)",
+                pointBackgroundColor: "rgba(64, 146, 217, 1)",
                 pointBorderColor: "#fff",
-                pointHoverBackgroundColor: "rgba(0,160,160,0.8)",
-                pointHoverBorderColor: "rgba(0,160,160,1)",
+                pointHoverBackgroundColor: "rgba(64, 146, 217, 0.8)",
+                pointHoverBorderColor: "rgba(64, 146, 217, 1)",
                 borderWidth: 1
             }]
         },

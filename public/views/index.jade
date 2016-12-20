@@ -11,8 +11,8 @@ block content
 
                     li.sidenav-list-item
                         #style-pane.side-panel(ng-controller="sidePanelController")
-                            a(href='', ng-click='toggle()'): i(class="fa fa-paint-brush")
-                            .pageslide(pageslide ps-open='checked', ps-speed='0.25', ps-side="left")
+                            a(href='', ng-click='toggle()', title="Change style", data-toggle="tooltip", data-placement="right", tooltip): i(class="fa fa-paint-brush")
+                            .pageslide(pageslide ps-open='checked', ps-speed='0.25', ps-side="left", ps-size='150px')
                                 div(style='padding:20px')
                                     .btn-group-vertical(data-toggle='buttons')
                                         label.btn.btn-default.disabled
@@ -41,7 +41,7 @@ block content
 
                     li.sidenav-list-item
                         #search-pane.side-panel(ng-controller="sidePanelController")
-                            a(href='', ng-click='toggle()'): i(class="fa fa-list")
+                            a(href='', ng-click='toggle()', title="Search", data-toggle="tooltip", data-placement="right", tooltip): i(class="fa fa-list")
                             .pageslide(pageslide ps-open='checked', ps-speed='0.25', ps-side="left")
                                 div(style='padding:20px')
                                     form(role='form')
@@ -56,7 +56,7 @@ block content
 
                     li.sidenav-list-item
                         #info-pane.side-panel(ng-controller="infoPanelController")
-                            button#info-button.link-button(href='', ng-disabled='selectedPoint == null', ng-click='toggle()'): i(class="fa fa-table")
+                            button#info-button.link-button(href='', ng-disabled='selectedPoint == null', ng-click='toggle()', title="Details", data-toggle="tooltip", data-placement="right", tooltip): i(class="fa fa-table")
                             #info-pageslide.pageslide(pageslide ps-open='checked', ps-speed='0.25', ps-side="left", ps-click-outside='false')
                                 .panel.panel-primary
                                     .panel-heading {{selectedPoint.properties.plate}}
@@ -65,15 +65,18 @@ block content
                                             li
                                                 .description Speed
                                                 .value
-                                                    span.neutral {{selectedPoint.properties.speed}} km/h
+                                                    span.neutral {{selectedPoint.properties.speed.toFixed(1)}} km/h
                                             li
                                                 .description Distance
                                                 .value
-                                                    span.neutral {{selectedPoint.properties.distance}} km
+                                                    span.neutral {{selectedPoint.properties.distance.toFixed(1)}} km
 
                                         a.btn.btn-primary(data-toggle='modal', data-target='#historyModal', href='#historyModal', role='button') Show history
+                                        a.btn.btn-primary(ng-click='stopTracking()', role='button') Stop tracking
                                         a.btn.btn-default(ng-click='toggle()', role='button') Close
 
+                    li.sidenav-list-item(ng-controller='sidePanelController')
+                        a(href='', ng-click='toggleReset()', ng-disabled='selectedPoint == null', title="Stop tracking", data-toggle="tooltip", data-placement="right", tooltip): i(class="fa fa-hand-stop-o")
 
         #page-content-wrapper
 
@@ -94,8 +97,6 @@ block content
                                         a.material-tabs__tab-link(href='#speedChartTab', data-toggle='tab') Speed
                                     li
                                         a.material-tabs__tab-link(href='#distanceChartTab', data-toggle='tab') Distance
-                                    li
-                                        a.material-tabs__tab-link.material-tabs__tab-link_disabled(href='javascript:void(0)') disabled
                                 .tab-content.materail-tabs-content
                                     #speedChartTab.tab-pane.fade.active.in
                                         .chartDiv
@@ -103,8 +104,3 @@ block content
                                     #distanceChartTab.tab-pane.fade
                                         .chartDiv
                                             canvas#distanceChart.chart(width='500', height='500')
-                        .modal-footer
-                            button.btn.btn-default
-                                | Default
-                            button.btn.btn-primary
-                                | Primary

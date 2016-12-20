@@ -1,21 +1,15 @@
 var MBTiles = require('mbtiles');
 var p = require("path");
 
-// path to the mbtiles; default is the server.js directory
 var tilesDir = __dirname;
 
-// Set return header
 function getContentType(t) {
     var header = {};
 
-    // CORS
     header["Access-Control-Allow-Origin"] = "*";
     header["Access-Control-Allow-Headers"] = "Origin, X-Requested-With, Content-Type, Accept";
+    header["Cache-Control"] = "public, max-age=2592000";
 
-    // Cache
-    //header["Cache-Control"] = "public, max-age=2592000";
-
-    // request specific headers
     if (t === "png") {
         header["Content-Type"] = "image/png";
     }

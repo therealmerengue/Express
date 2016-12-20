@@ -80,7 +80,7 @@ function getMap(options, pointData) {
         if (clusterFeatures.length) {
             map.flyTo({
                 center: e.lngLat,
-                zoom: map.getZoom() + 2
+                zoom: map.getZoom() < 8 ? map.getZoom() + 2 : map.getZoom()
             });
         }
     });

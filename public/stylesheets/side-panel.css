@@ -52,6 +52,7 @@ body.ng-pageslide-body-closed::before {
 .panel.panel-primary {
     height: 100%;
     border: none;
+    background-color: rgba(255, 255, 255, 0);
 }
 
 .panel-heading {
@@ -59,4 +60,8 @@ body.ng-pageslide-body-closed::before {
     font-size: -webkit-xxx-large;
     text-align: center;
     border-radius: 0!important;
+}
+
+.panel-body {
+    background-color: rgba(255, 255, 255, 0);
 }

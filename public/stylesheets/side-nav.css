@@ -27,11 +27,11 @@ label.btn.btn-primary img {
     margin-right: 5%;
 }
 
-li.sidenav-list-item > a.active {
-    color: red;
-    outline: 0;
-}
-
 .sidenav-list-item a {
     color: #337ab7;
+}
+
+.white-tooltip + .tooltip > .tooltip-inner, .tooltip-arrow {
+    margin-left: 10px;
+    font-weight: bold;
 }
