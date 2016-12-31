@@ -29,7 +29,7 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
                 bearing: 0,
                 pitch: 0,
                 minZoom: 1,
-                style: '/styles/style.json',
+                style: 'http://localhost:8000/styles/style.json',
                 maxBounds: [
                     [-185.0, -85.0], // Southwest coordinates
                     [185.0, 85.0]  // Northeast coordinates

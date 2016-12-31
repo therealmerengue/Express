@@ -1,15 +1,25 @@
-var MBTiles = require('mbtiles');
-var p = require("path");
+var express = require("express"),
+    app = express(),
+    MBTiles = require('mbtiles'),
+    p = require("path");
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+app.use(express.static(p.join(__dirname, 'map_assets')));
 var tilesDir = __dirname;
 
+// Set return header
 function getContentType(t) {
     var header = {};
 
-    header["Access-Control-Allow-Origin"] = "*";
-    header["Access-Control-Allow-Headers"] = "Origin, X-Requested-With, Content-Type, Accept";
+    // Cache
     header["Cache-Control"] = "public, max-age=2592000";
 
+    // request specific headers
     if (t === "png") {
         header["Content-Type"] = "image/png";
     }
@@ -24,8 +34,9 @@ function getContentType(t) {
     return header;
 }
 
-module.exports.getTile = function(req, res) {
-    new MBTiles(p.join(tilesDir, '../planet.mbtiles'), function(err, mbtiles) {
+// tile cannon
+app.get('/:s/:z/:x/:y.:t', function(req, res) {
+    new MBTiles(p.join(tilesDir, 'planet.mbtiles'), function(err, mbtiles) {
         mbtiles.getTile(req.params.z, req.params.x, req.params.y, function(err, tile, headers) {
             if (err) {
                 res.set({"Content-Type": "text/plain"});
@@ -37,4 +48,7 @@ module.exports.getTile = function(req, res) {
         });
         if (err) console.log("error opening database");
     });
-};
+});
+
+console.log('Listening on port: ' + 3000);
+app.listen(3000);

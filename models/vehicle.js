@@ -16,7 +16,7 @@ var vehicleObject = {
         plate: {type: String, required: true},
         date: Date
     }
-}
+};
 
 var vehicleDataSchema = new Schema(vehicleObject, {collection: 'vehicles'});
 var vehicleHistoryDataSchema = new Schema(vehicleObject, {collection: 'history'});

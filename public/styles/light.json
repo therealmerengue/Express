@@ -81,7 +81,7 @@
   "sources": {
     "mapbox": {
       "tiles": [
-        "http://localhost:8000/planet/{z}/{x}/{y}.pbf"
+        "http://localhost:3000/planet/{z}/{x}/{y}.pbf"
       ],
       "type": "vector",
       "maxzoom": 14
@@ -89,14 +89,14 @@
     "parcels": {
       "type": "vector",
       "tiles": [
-        "http://localhost:8000/planet/{z}/{x}/{y}.pbf"
+        "http://localhost:3000/planet/{z}/{x}/{y}.pbf"
       ],
       "maxzoom": 14,
       "minzoom": 14
     }
   },
-  "sprite": "../assets/assets_light/sprite",
-  "glyphs": "../assets/assets_light/font/{fontstack}/{range}.pbf",
+  "sprite": "http://localhost:3000/assets_light/sprite",
+  "glyphs": "http://localhost:3000/assets_light/font/{fontstack}/{range}.pbf",
   "layers": [
     {
       "id": "background",

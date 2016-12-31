@@ -5,6 +5,15 @@ function getMap(options, pointData) {
     map.touchZoomRotate.disableRotation();
     map.addControl(new mapboxgl.NavigationControl({position: 'top-right'}));
 
+    var draw = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+            polygon: true,
+            trash: true
+        }
+    });
+    map.addControl(draw);
+
     map.on('style.load', function() {
         map.addSource('points', {
             "type": "geojson",
