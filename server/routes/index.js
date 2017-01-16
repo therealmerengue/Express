@@ -2,14 +2,14 @@ var express = require('express');
 var assert = require('assert');
 var router = express.Router();
 
-var vehicleController = require('../routers/vehicleRouter');
+var vehicleRouter = require('../routers/vehicleRouter');
 
 router.get('/', function(req, res) {
     res.render('index');
 });
 
-router.get('/all', vehicleController.getVehicles);
+router.get('/all', vehicleRouter.getVehicles);
 
-router.post('/insert', vehicleController.insertVehicleHistory);
+router.post('/insert', vehicleRouter.insertVehicleHistory);
 
 module.exports = router;

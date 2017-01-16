@@ -33,7 +33,7 @@ body.ng-pageslide-body-closed::before {
 }
 
 #info-pageslide {
-    background-color: rgba(252, 252, 252, 0.8);
+    background-color: rgba(252, 252, 252, 0.7);
     box-shadow: 4px 0 5px -2px #999;
 }
 
@@ -62,6 +62,15 @@ body.ng-pageslide-body-closed::before {
     border-radius: 0!important;
 }
 
+.panel-heading h1 {
+    float: left;
+    margin-top: 10px;
+}
+
 .panel-body {
     background-color: rgba(255, 255, 255, 0);
+}
+
+.btn-close {
+    float: right;
 }

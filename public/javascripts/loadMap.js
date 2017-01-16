@@ -1,8 +1,8 @@
 function getMap(options, pointData) {
     var map = new mapboxgl.Map(options);
 
-    map.dragRotate.disable();
-    map.touchZoomRotate.disableRotation();
+    //map.dragRotate.disable();
+    //map.touchZoomRotate.disableRotation();
     map.addControl(new mapboxgl.NavigationControl({position: 'top-right'}));
 
     var draw = new MapboxDraw({
@@ -12,6 +12,7 @@ function getMap(options, pointData) {
             trash: true
         }
     });
+    draw.modes.DIRECT_SELECT === 'direct_select'
     map.addControl(draw);
 
     map.on('style.load', function() {

@@ -95,8 +95,8 @@
             "minzoom": 14
         }
     },
-    "sprite": "http://localhost:3000/assets_improved/sprite",
-    "glyphs": "http://localhost:3000/assets_improved/font/{fontstack}/{range}.pbf",
+    "sprite": "http://localhost:3000/assets_app/sprite",
+    "glyphs": "http://localhost:3000/assets_app/font/{fontstack}/{range}.pbf",
     "layers": [
         {
             "id": "background",

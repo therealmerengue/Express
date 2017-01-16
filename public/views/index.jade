@@ -19,23 +19,23 @@ block content
                                             input(type='radio', name='options', autocomplete='off', disabled='true')
                                             |  Style:
                                         label.btn.btn-primary.active(ng-click='setStyle(styles[0])')
-                                            img(src="images/App.png")
+                                            img(src="images/app.png")
                                             input#style(type='radio', name='options', autocomplete='off', checked='')
                                             |  App
                                         label.btn.btn-primary(ng-click='setStyle(styles[1])')
-                                            img(src="images/Basic.png")
+                                            img(src="images/basic.png")
                                             input#basic(type='radio', name='options', autocomplete='off')
                                             |  Basic
                                         label.btn.btn-primary(ng-click='setStyle(styles[2])')
-                                            img(src="images/Light.png")
+                                            img(src="images/dark.png")
                                             input#light(type='radio', name='options', autocomplete='off')
-                                            |  Light
-                                        label.btn.btn-primary(ng-click='setStyle(styles[3])')
-                                            img(src="images/Dark.png")
-                                            input#dark(type='radio', name='options', autocomplete='off')
                                             |  Dark
+                                        label.btn.btn-primary(ng-click='setStyle(styles[3])')
+                                            img(src="images/light.png")
+                                            input#dark(type='radio', name='options', autocomplete='off')
+                                            |  Light
                                         label.btn.btn-primary(ng-click='setStyle(styles[4])')
-                                            img(src="images/Street.png")
+                                            img(src="images/street.png")
                                             input#street(type='radio', name='options', autocomplete='off')
                                             |  Street
 
@@ -59,7 +59,9 @@ block content
                             button#info-button.link-button(href='', ng-disabled='selectedPoint == null', ng-click='toggle()', title="Details", data-toggle="tooltip", data-placement="right", tooltip): i(class="fa fa-table")
                             #info-pageslide.pageslide(pageslide ps-open='checked', ps-speed='0.25', ps-side="left", ps-click-outside='false')
                                 .panel.panel-primary
-                                    .panel-heading {{selectedPoint.properties.plate}}
+                                    .panel-heading 
+                                        h1 {{selectedPoint.properties.plate}}
+                                        a.btn.btn-default.btn-close(ng-click='toggle()', role='button') X
                                     .panel-body
                                         ul.value-list
                                             li
@@ -73,7 +75,7 @@ block content
 
                                         a.btn.btn-primary(data-toggle='modal', data-target='#historyModal', href='#historyModal', role='button') Show history
                                         a.btn.btn-primary(ng-click='stopTracking()', role='button') Stop tracking
-                                        a.btn.btn-default(ng-click='toggle()', role='button') Close
+                                        
 
                     li.sidenav-list-item(ng-controller='sidePanelController')
                         a(href='', ng-click='toggleReset()', ng-disabled='selectedPoint == null', title="Stop tracking", data-toggle="tooltip", data-placement="right", tooltip): i(class="fa fa-hand-stop-o")
@@ -82,14 +84,13 @@ block content
 
             #map
 
-            #historyModal.modal.animated.bounceIn(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
-                .modal-dialog
+            #historyModal.modal.bs-example-modal-lg-new(tabindex='-1', role='dialog', aria-labelledby='historyModalLabel', aria-hidden='true')
+                .modal-dialog.modal-lg
                     .modal-content
                         .modal-header
-                            h1#modalLabel.modal-title
-                                | {{selectedPoint.properties.plate}}
-                            button.btn.btn-secondary.btn-close(data-dismiss='modal')
-                                | Close
+                            h4#historyModalLabel.modal-title {{selectedPoint.properties.plate}}
+                            span.inline-close-button
+                                button.btn.btn-primary(type='button', data-dismiss='modal') X
                         .modal-body
                             .panel-group.material-tabs-group
                                 ul.nav.nav-tabs.material-tabs.material-tabs_primary

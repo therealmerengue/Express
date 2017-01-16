@@ -29,7 +29,7 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
                 bearing: 0,
                 pitch: 0,
                 minZoom: 1,
-                style: 'http://localhost:8000/styles/style.json',
+                style: 'http://localhost:3000/styles/style.json',
                 maxBounds: [
                     [-185.0, -85.0], // Southwest coordinates
                     [185.0, 85.0]  // Northeast coordinates
@@ -76,7 +76,13 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
             $scope.map = map;
         });
 
-        $scope.styles = ['/styles/style.json', '/styles/basic.json', '/styles/light.json', '/styles/dark.json', '/styles/street.json'];
+        $scope.styles = [
+            'http://localhost:3000/styles/style.json', 
+            'http://localhost:3000/styles/basic.json', 
+            'http://localhost:3000/styles/dark.json', 
+            'http://localhost:3000/styles/light.json', 
+            'http://localhost:3000/styles/street.json'
+        ];
 
         $scope.setStyle = function(style) {
             $scope.map.setStyle(style);
@@ -100,7 +106,8 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
             $window.selectedPoint = $scope.selectedPoint;
 
             $scope.map.flyTo({
-                center: point.geometry.coordinates
+                center: point.geometry.coordinates,
+                zoom: $scope.map.getZoom() < 7 ? 7 : $scope.map.getZoom()
             });
         };
 

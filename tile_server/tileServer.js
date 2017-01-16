@@ -9,7 +9,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.use(express.static(p.join(__dirname, 'map_assets')));
+app.use(express.static(p.join(__dirname, 'map')));
 var tilesDir = __dirname;
 
 // Set return header
