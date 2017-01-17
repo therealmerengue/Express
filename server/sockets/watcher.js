@@ -38,26 +38,4 @@ oplog.stop(function() {
     console.log('server stopped');
 });
 
-socketIO.on('connection', function(socket) {
-    socket.on('getVehicle', function(data) {
-        console.log(data.plate);
-        var plate = data.plate;
-        var vehicle = {};
-        console.log(plate);
-        models.vehicleData.find({'properties.plate': plate}, models.selectObject)
-            .then(function(doc) {
-                vehicle.current = doc;
-                models.vehicleHistoryData.find({'properties.plate': plate}, models.selectObject)
-                    .then(function(doc) {
-                        console.log(vehicle);
-                        vehicle.history = doc;
-                        socket.emit('vehicleSent', {
-                            current: vehicle.current,
-                            history: vehicle.history
-                        });
-                    });
-            });
-    });
-});
-
 module.exports = socketIO;

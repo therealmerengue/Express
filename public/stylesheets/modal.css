@@ -16,6 +16,7 @@
 .modal-content {
     margin-left: 35%;
     min-width: 300px;
+    min-height: 250px;
     background-color: rgba(255,255,255,0.9);
 }
 
@@ -68,4 +69,9 @@ h4, .inline-close-button {
 
 .inline-close-button {
     float: right;
+}
+
+canvas {
+    width: 500px;
+    height: 500px;
 }

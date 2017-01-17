@@ -4,53 +4,43 @@ app.directive('tooltip', function(){
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
-            $(element).hover(function(){
-                // on mouseenter
+            $(element).hover(function() { //on mouseenter
                 $(element).tooltip('show');
-            }, function(){
-                // on mouseleave
-                $(element).tooltip('hide');
+            }, function() {
+                $(element).tooltip('hide'); //on mouseleave
             });
         }
     };
 });
 
-function sidePanelModule(obj) {
-    obj.checked = false;
-    obj.size = '100px';
-    obj.show = function(value) {
-        obj.checked = value;
-    };
-    obj.mockRouteChange = function () {
-        obj.$broadcast('$locationChangeStart');
-    };
-    return obj;
-}
+app.controller('sidePanelController', ['$scope', 'sidePanelService', function($scope, sidePanelService) {
+    sidePanelService.extendPanel($scope);
 
-app.controller('sidePanelController', ['$scope', function($scope) {
-    $scope = sidePanelModule($scope);
+    $scope.styles = [
+        'http://localhost:3000/styles/style.json',
+        'http://localhost:3000/styles/basic.json',
+        'http://localhost:3000/styles/dark.json',
+        'http://localhost:3000/styles/light.json',
+        'http://localhost:3000/styles/street.json'
+    ];
 
-    $scope.toggle = function() {
-        $scope.checked = !$scope.checked;
+    $scope.setStyle = function(style) {
+        $scope.$parent.map.setStyle(style);
+    };
+
+    $scope.toggleHide = function() {
+        $scope.toggle();
         angular.element('#info-pane').scope().show(false);
     };
 
-    $scope.toggleReset = function() {
-        $scope.toggle();
+    $scope.stopTracking = function() {
+        $scope.toggleHide();
         $scope.$parent.selectedPoint = null;
     };
 }]);
 
-app.controller('infoPanelController', ['$scope', function($scope) {
-    $scope = sidePanelModule($scope);
-
-    $scope.toggle = function() {
-        $scope.checked = !$scope.checked;
-    };
-    $scope.stopTracking = function() {
-        $scope.toggle();
-        $scope.$parent.selectedPoint = null;
-    };
+app.controller('infoPanelController', ['$scope', 'sidePanelService', function($scope, sidePanelService) {
+    sidePanelService.extendPanel($scope);
 }]);
 
 

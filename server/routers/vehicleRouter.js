@@ -10,12 +10,30 @@ module.exports.getVehicles = function(req, res) {
         });
 };
 
+module.exports.getVehicle = function(req, res) {
+    var plate = req.params.plate;
+    var vehicle = {};
+    console.log(plate);
+    models.vehicleData.find({'properties.plate': plate}, models.selectObject)
+        .then(function(doc) {
+            vehicle.current = doc;
+            models.vehicleHistoryData.find({'properties.plate': plate}, models.selectObject)
+                .then(function(doc) {
+                    vehicle.history = doc;
+                    res.send({
+                        current: vehicle.current,
+                        history: vehicle.history
+                    });
+                });
+        });
+};
+
 module.exports.insertVehicleHistory = function(req, res) {
-    console.log(JSON.parse(req.body.vehicleData));
-    var document = JSON.parse(req.body.vehicleData);
-    delete document[0]._id;
-    delete document[0].$$hashKey;
-    models.vehicleHistoryData.collection.insertMany(document, function(err, r) {
+    console.log(req.body.vehicleData);
+    var document = req.body.vehicleData;
+    delete document._id;
+    delete document.$$hashKey;
+    models.vehicleHistoryData.collection.insert(document, function(err, r) {
         if (err) {
             console.log(err);
         }

@@ -73,4 +73,9 @@ body.ng-pageslide-body-closed::before {
 
 .btn-close {
     float: right;
+    margin-top: 10px;
+}
+
+.stop-tracking-button {
+    float: right;
 }

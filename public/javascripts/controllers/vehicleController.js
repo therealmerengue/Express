@@ -1,18 +1,7 @@
 var app = angular.module('trackingApp');
 
-var selectedPoint = {};
-
-app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
-    function($scope, $http, $window, $timeout) {
-        console.log('VehicleController loaded...');
-
-        var updateChart = function(chart, label, newData) {
-            chart.data.labels.push(label); // add new label at end
-            chart.data.labels.splice(0, 1); // remove first label
-            chart.data.datasets[0].data.push(newData);
-            chart.data.datasets[0].data.splice(0, 1);
-            chart.update();
-        };
+app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout', 'mapFactory', 'chartFactory', 'vehicleService',
+    function($scope, $http, $window, $timeout, mapFactory, chartFactory, vehicleService) {
 
         var triggerInfoButtonClick = function(clicks) {
             for (var c = 0; c < clicks; c++) {
@@ -22,13 +11,12 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
 
         $http.get('/all').success(function(response) {
             $scope.points = response;
-            var map = getMap({
+            var map = mapFactory({
                 container: 'map',
                 center: [0, 0],
-                zoom: 1.01,
+                zoom: 1,
                 bearing: 0,
                 pitch: 0,
-                minZoom: 1,
                 style: 'http://localhost:3000/styles/style.json',
                 maxBounds: [
                     [-185.0, -85.0], // Southwest coordinates
@@ -40,11 +28,11 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
 
             socket.on('change', function(data) {
                 console.log(data);
-                pointModule.updatePoint(data, map);
+                vehicleService.updateVehicle(data, map);
                 var parsed = JSON.parse(data);
                 if ($scope.selectedPoint != undefined && parsed[0].properties.plate == $scope.selectedPoint.properties.plate) {
-                    updateChart($scope.charts[0], parsed[0].properties.date.toString().substring(0, 19).replace('T', ' '), parsed[0].properties.speed);
-                    updateChart($scope.charts[1], parsed[0].properties.date.toString().substring(0, 19).replace('T', ' '), parsed[0].properties.distance);
+                    chartFactory.updateChart($scope.charts[0], parsed[0].properties.date.toString().substring(0, 19).replace('T', ' '), parsed[0].properties.speed);
+                    chartFactory.updateChart($scope.charts[1], parsed[0].properties.date.toString().substring(0, 19).replace('T', ' '), parsed[0].properties.distance);
                     $scope.selectedPoint = parsed[0];
                     $scope.map.flyTo({
                         center: $scope.selectedPoint.geometry.coordinates
@@ -54,45 +42,39 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
 
             socket.on('insert', function(data) {
                 console.log(data);
-                pointModule.insertPoint(data, map);
+                vehicleService.insertVehicle(data, map);
             });
 
             socket.on('delete', function(data) {
                 console.log(data);
-                pointModule.deletePoint(data, map);
-            });
-
-            socket.on('vehicleSent', function(data) {
-                if ($scope.charts != undefined) {
-                    for (var i = 0; i < $scope.charts.length; i++) {
-                        $scope.charts[i].destroy();
-                    }
-                }
-                $scope.charts = presentData(data);
+                vehicleService.deleteVehicle(data, map);
             });
 
             $scope.socket = socket;
 
+            map.on('click', function(e) {
+                var pointFeatures = map.queryRenderedFeatures(e.point, {layers: ['points']});
+                if (pointFeatures.length) {
+                    $scope.getVehicle(pointFeatures[0]);
+                }
+            });
+
             $scope.map = map;
         });
 
-        $scope.styles = [
-            'http://localhost:3000/styles/style.json', 
-            'http://localhost:3000/styles/basic.json', 
-            'http://localhost:3000/styles/dark.json', 
-            'http://localhost:3000/styles/light.json', 
-            'http://localhost:3000/styles/street.json'
-        ];
+        $scope.getVehicle = function(point) {
+            if ($scope.selectedPoint == undefined || point.properties.plate != $scope.selectedPoint.properties.plate) {
+                $http.get('/info/' + point.properties.plate).success(function(data) {
+                    if ($scope.charts != undefined) {
+                        for (var i = 0; i < $scope.charts.length; i++) {
+                            $scope.charts[i].destroy();
+                        }
+                    }
+                    $scope.charts = chartFactory.presentData(data);
+                });
+            }
 
-        $scope.setStyle = function(style) {
-            $scope.map.setStyle(style);
-        };
-
-        $scope.getVehicleSocket = function(point) {
-            if (point != $window.selectedPoint)
-                $scope.socket.emit('getVehicle', { plate: point.properties.plate });
-
-            if (!angular.element('#info-pane').scope().checked) {
+            if (document.querySelector('#info-pageslide').style.left == '-300px') {
                 $timeout(function() {
                     triggerInfoButtonClick(1);
                 }, 0);
@@ -103,19 +85,10 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout',
             }
 
             $scope.selectedPoint = point;
-            $window.selectedPoint = $scope.selectedPoint;
 
             $scope.map.flyTo({
                 center: point.geometry.coordinates,
                 zoom: $scope.map.getZoom() < 7 ? 7 : $scope.map.getZoom()
-            });
-        };
-
-        $scope.insertVehicleHistory = function(preChangedPoints) {
-            $http.post('/insert', {
-                vehicleData: JSON.stringify(preChangedPoints)
-            }).success(function(response) {
-                console.log('History inserted');
             });
         };
     }
