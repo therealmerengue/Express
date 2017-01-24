@@ -1,0 +1,15 @@
+<div style="padding:20px">
+   <form role="form">
+      <div class="form-group">
+            <input id="searchinput" type="search" placeholder="Search..." class="form-control"/>
+      </div>
+      <div id="searchlist" class="list-group">
+            <a href="#" ng-repeat="point in points" ng-click="getVehicle(point)" class="list-group-item vehicle">
+               <span>{{point.properties.plate}}</span>
+            </a>
+      </div>
+   </form>
+   <script>
+      $('#searchlist').btsListFilter('#searchinput', {itemChild: 'span'});
+   </script>
+</div>

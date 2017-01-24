@@ -17,6 +17,11 @@ body.ng-pageslide-body-open::before {
     pointer-events: all;
 }
 
+.filler, .partial {
+    height: 100%;
+    width: 100%;
+}
+
 body.ng-pageslide-body-closed::before {
     transition: opacity 1s;
     content: '.';

@@ -44,111 +44,46 @@
         <nav class="sidenav">
             <ul class="sidenav-list">
                 <li class="sidenav-list-item">
-                    <div id="style-pane" ng-controller="sidePanelController" class="side-panel"><a href="" ng-click="toggleHide()" title="Change style" data-toggle="tooltip" data-placement="right" tooltip="tooltip"><i class="fa fa-paint-brush"></i></a>
+                    <div id="style-pane" ng-controller="sidePanelController" class="side-panel">
+                        <a href="" ng-click="toggleHide()" title="Change style" data-toggle="tooltip" data-placement="right" tooltip="tooltip">
+                            <i class="fa fa-paint-brush"></i>
+                        </a>
                         <div pageslide="pageslide" ps-open="checked" ps-speed="0.25" ps-side="left" ps-size="150px" class="pageslide">
-                            <div style="padding:20px">
-                                <div data-toggle="buttons" class="btn-group-vertical">
-                                    <label class="btn btn-default disabled">
-                                        <input type="radio" name="options" autocomplete="off" disabled="true"/> Style:
-                                    </label>
-                                    <label ng-click="setStyle(styles[0])" class="btn btn-primary active"><img src="images/app.png"/>
-                                        <input id="style" type="radio" name="options" autocomplete="off" checked=""/> App
-                                    </label>
-                                    <label ng-click="setStyle(styles[1])" class="btn btn-primary"><img src="images/basic.png"/>
-                                        <input id="basic" type="radio" name="options" autocomplete="off"/> Basic
-                                    </label>
-                                    <label ng-click="setStyle(styles[2])" class="btn btn-primary"><img src="images/dark.png"/>
-                                        <input id="light" type="radio" name="options" autocomplete="off"/> Dark
-                                    </label>
-                                    <label ng-click="setStyle(styles[3])" class="btn btn-primary"><img src="images/light.png"/>
-                                        <input id="dark" type="radio" name="options" autocomplete="off"/> Light
-                                    </label>
-                                    <label ng-click="setStyle(styles[4])" class="btn btn-primary"><img src="images/street.png"/>
-                                        <input id="street" type="radio" name="options" autocomplete="off"/> Street
-                                    </label>
-                                </div>
-                            </div>
+                            <div class="filler"><div ng-include="'views/stylePanel.html'"></div></div>
                         </div>
                     </div>
                 </li>
                 <li class="sidenav-list-item">
-                    <div id="search-pane" ng-controller="sidePanelController" class="side-panel"><a href="" ng-click="toggleHide()" title="Search" data-toggle="tooltip" data-placement="right" tooltip="tooltip"><i class="fa fa-list"></i></a>
+                    <div id="search-pane" ng-controller="sidePanelController" class="side-panel">
+                        <a href="" ng-click="toggleHide()" title="Search" data-toggle="tooltip" data-placement="right" tooltip="tooltip">
+                            <i class="fa fa-list"></i>
+                        </a>
                         <div pageslide="pageslide" ps-open="checked" ps-speed="0.25" ps-side="left" class="pageslide">
-                            <div style="padding:20px">
-                                <form role="form">
-                                    <div class="form-group">
-                                        <input id="searchinput" type="search" placeholder="Search..." class="form-control"/>
-                                    </div>
-                                    <div id="searchlist" class="list-group"><a href="#" ng-repeat="point in points" ng-click="getVehicle(point)" class="list-group-item vehicle"><span>{{point.properties.plate}}</span></a></div>
-                                </form>
-                                <script>
-                                    $('#searchlist').btsListFilter('#searchinput', {itemChild: 'span'});
-                                </script>
-                            </div>
+                            <div class="filler"><div ng-include="'views/listPanel.html'"></div></div>
                         </div>
                     </div>
                 </li>
                 <li class="sidenav-list-item">
                     <div id="info-pane" ng-controller="infoPanelController" class="side-panel">
-                        <button id="info-button" href="" ng-disabled="selectedPoint == null" ng-click="toggle()" title="Details" data-toggle="tooltip" data-placement="right" tooltip="tooltip" class="link-button"><i class="fa fa-table"></i></button>
+                        <button id="info-button" href="" ng-disabled="selectedPoint == null" ng-click="toggle()" title="Details" data-toggle="tooltip" data-placement="right" tooltip="tooltip" class="link-button">
+                            <i class="fa fa-table"></i>
+                        </button>
                         <div id="info-pageslide" pageslide="pageslide" ps-open="checked" ps-speed="0.25" ps-side="left" ps-click-outside="false" class="pageslide">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <h1>{{selectedPoint.properties.plate}}</h1><a ng-click="toggle()" role="button" class="btn btn-default btn-close">X</a>
-                                </div>
-                                <div class="panel-body">
-                                    <ul class="value-list">
-                                        <li>
-                                            <div class="description">Speed</div>
-                                            <div class="value"><span class="neutral">{{selectedPoint.properties.speed.toFixed(1)}} km/h</span></div>
-                                        </li>
-                                        <li>
-                                            <div class="description">Distance</div>
-                                            <div class="value"><span class="neutral">{{selectedPoint.properties.distance.toFixed(1)}} km</span></div>
-                                        </li>
-                                    </ul><a data-toggle="modal" data-target="#historyModal" href="#historyModal" role="button" class="btn btn-primary">Show history</a>
-                                    <a ng-click="toggleReset()" role="button" class="btn btn-primary stop-tracking-button">Stop tracking</a>
-                                </div>
-                            </div>
+                            <div class="filler"><div class="partial" ng-include="'views/infoPanel.html'"></div></div>
                         </div>
                     </div>
                 </li>
-                <li ng-controller="sidePanelController" class="sidenav-list-item"><a href="" ng-click="stopTracking()" ng-disabled="selectedPoint == null" title="Stop tracking" data-toggle="tooltip" data-placement="right" tooltip="tooltip"><i class="fa fa-hand-stop-o"></i></a></li>
+                <li ng-controller="sidePanelController" class="sidenav-list-item">
+                    <a href="" ng-click="stopTracking()" ng-disabled="selectedPoint == null" title="Stop tracking" data-toggle="tooltip" data-placement="right" tooltip="tooltip">
+                        <i class="fa fa-hand-stop-o"></i>
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>
     <div id="page-content-wrapper">
         <div id="map"></div>
-        <div id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel" aria-hidden="true" class="modal bs-example-modal-lg-new">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 id="historyModalLabel" class="modal-title">{{selectedPoint.properties.plate}}</h4><span class="inline-close-button">
-              <button type="button" data-dismiss="modal" class="btn btn-primary">X</button></span>
-                    </div>
-                    <div class="modal-body">
-                        <div class="panel-group material-tabs-group">
-                            <ul class="nav nav-tabs material-tabs material-tabs_primary">
-                                <li class="active"><a href="#speedChartTab" data-toggle="tab" class="material-tabs__tab-link">Speed</a></li>
-                                <li><a href="#distanceChartTab" data-toggle="tab" class="material-tabs__tab-link">Distance</a></li>
-                            </ul>
-                            <div class="tab-content materail-tabs-content">
-                                <div id="speedChartTab" class="tab-pane fade active in">
-                                    <div class="chartDiv">
-                                        <canvas id="speedChart" width="500" height="500" class="chart"></canvas>
-                                    </div>
-                                </div>
-                                <div id="distanceChartTab" class="tab-pane fade">
-                                    <div class="chartDiv">
-                                        <canvas id="distanceChart" width="500" height="500" class="chart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div ng-include="'views/chartModal.html'"></div>
     </div>
 </div>
 </body>

@@ -1,0 +1,30 @@
+<div id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel" aria-hidden="true" class="modal bs-example-modal-lg-new">
+   <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h4 id="historyModalLabel" class="modal-title">{{selectedPoint.properties.plate}}</h4><span class="inline-close-button">
+            <button type="button" data-dismiss="modal" class="btn btn-primary">X</button></span>
+         </div>
+         <div class="modal-body">
+            <div class="panel-group material-tabs-group">
+               <ul class="nav nav-tabs material-tabs material-tabs_primary">
+                  <li class="active"><a href="#speedChartTab" data-toggle="tab" class="material-tabs__tab-link">Speed</a></li>
+                  <li><a href="#distanceChartTab" data-toggle="tab" class="material-tabs__tab-link">Distance</a></li>
+               </ul>
+               <div class="tab-content materail-tabs-content">
+                  <div id="speedChartTab" class="tab-pane fade active in">
+                     <div class="chartDiv">
+                        <canvas id="speedChart" width="500" height="500" class="chart"></canvas>
+                     </div>
+                  </div>
+                  <div id="distanceChartTab" class="tab-pane fade">
+                     <div class="chartDiv">
+                        <canvas id="distanceChart" width="500" height="500" class="chart"></canvas>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
