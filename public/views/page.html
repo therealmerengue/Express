@@ -33,9 +33,10 @@
     <script src="/javascripts/controllers/vehicleController.js"></script>
     <script src="/javascripts/lib/angular-pageslide-directive.js"></script>
     <script src="/javascripts/controllers/sidePanelController.js"></script>
+    <script src="/javascripts/controllers/chartController.js"></script>
     <script src="/javascripts/factories/mapFactory.js"></script>
     <script src="/javascripts/factories/chartFactory.js"></script>
-    <script src="/javascripts/services/vehicleService.js"></script>
+    <script src="/javascripts/services/pointService.js"></script>
     <script src="/javascripts/services/sidePanelService.js"></script>
 </head>
 <body>
@@ -83,7 +84,9 @@
     </div>
     <div id="page-content-wrapper">
         <div id="map"></div>
-        <div ng-include="'views/chartModal.html'"></div>
+        <div ng-controller="chartController">
+            <div ng-include="'views/chartModal.html'"></div>
+        </div>
     </div>
 </div>
 </body>

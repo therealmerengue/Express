@@ -1,7 +1,7 @@
 var app = angular.module('trackingApp');
 
-app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout', 'mapFactory', 'chartFactory', 'vehicleService',
-    function($scope, $http, $window, $timeout, mapFactory, chartFactory, vehicleService) {
+app.controller('VehicleController', ['$scope', '$http', '$timeout', 'mapFactory', 'vehicleService',
+    function($scope, $http, $timeout, mapFactory, vehicleService) {
 
         var triggerInfoButtonClick = function(clicks) {
             for (var c = 0; c < clicks; c++) {
@@ -21,7 +21,7 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout', '
                 maxBounds: [
                     [-185.0, -85.0], // Southwest coordinates
                     [185.0, 85.0]  // Northeast coordinates
-                ]
+                ]       
             }, response);
 
             var socket = io();
@@ -31,8 +31,7 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout', '
                 vehicleService.updateVehicle(data, map);
                 var parsed = JSON.parse(data);
                 if ($scope.selectedPoint != undefined && parsed[0].properties.plate == $scope.selectedPoint.properties.plate) {
-                    chartFactory.updateChart($scope.charts[0], parsed[0].properties.date.toString().substring(0, 19).replace('T', ' '), parsed[0].properties.speed);
-                    chartFactory.updateChart($scope.charts[1], parsed[0].properties.date.toString().substring(0, 19).replace('T', ' '), parsed[0].properties.distance);
+                    $scope.$broadcast('updateChart', { data: parsed });
                     $scope.selectedPoint = parsed[0];
                     $scope.map.flyTo({
                         center: $scope.selectedPoint.geometry.coordinates
@@ -50,8 +49,6 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout', '
                 vehicleService.deleteVehicle(data, map);
             });
 
-            $scope.socket = socket;
-
             map.on('click', function(e) {
                 var pointFeatures = map.queryRenderedFeatures(e.point, {layers: ['points']});
                 if (pointFeatures.length) {
@@ -65,12 +62,7 @@ app.controller('VehicleController', ['$scope', '$http', '$window', '$timeout', '
         $scope.getVehicle = function(point) {
             if ($scope.selectedPoint == undefined || point.properties.plate != $scope.selectedPoint.properties.plate) {
                 $http.get('/info/' + point.properties.plate).success(function(data) {
-                    if ($scope.charts != undefined) {
-                        for (var i = 0; i < $scope.charts.length; i++) {
-                            $scope.charts[i].destroy();
-                        }
-                    }
-                    $scope.charts = chartFactory.presentData(data);
+                    $scope.$broadcast('createCharts', { data: data });
                 });
             }
 
